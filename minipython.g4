@@ -1,8 +1,9 @@
-grammar minipython;
+grammar MiniPython;
 
 start              : statements ;
 
 identifier         : IDENTIFIER
+                   | SELF
                    | identifier '.' IDENTIFIER
                    | SELF '.' IDENTIFIER
                    ;
