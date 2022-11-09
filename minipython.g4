@@ -4,21 +4,21 @@ start              : statements ;
 
 identifier         : IDENTIFIER
                    | SELF
-                   | identifier '.' IDENTIFIER
-                   | SELF '.' IDENTIFIER
+                   | identifier DOT IDENTIFIER
+                   | SELF DOT IDENTIFIER
                    ;
 
-call_parameter     : expression (',' expression)*
+call_parameter     : expression (COMMA expression)*
                    |
                    ;
-call               : identifier '(' call_parameter ')' ;
+call               : identifier LBRACKET call_parameter RBRACKET ;
 
 expression         : call
                    | identifier
                    | INT
                    | STRING
                    | BOOLEAN
-                   | '(' expression ')'
+                   | LBRACKET expression RBRACKET
                    | expression MULTIPLY expression
                    | expression DIVIDE expression
                    | expression ADD expression
@@ -34,31 +34,31 @@ expression         : call
                    | expression OR expression
                    ;
 
-assignment         : identifier '=' expression ;
+assignment         : identifier ASSIGN expression ;
 
 return             : RETURN expression ;
 
-condition          : expression ':'
-                   | '(' expression '):'
+condition          : expression COLON
+                   | LBRACKET expression RBRACKET COLON 
                    ;
 
 loop               : WHILE condition statements END ;
 
 if_statement       : IF condition statements ;
 elif_statement     : ELIF condition statements ;
-else_statement     : ELSE statements ;
+else_statement     : ELSE COLON statements ;
 
 conditional        : if_statement elif_statement* else_statement? END ;
 
-function_parameter : IDENTIFIER (',' IDENTIFIER)*
+function_parameter : IDENTIFIER (COMMA IDENTIFIER)*
                    |
                    ;
 
-function           : DEF IDENTIFIER '(' function_parameter '):' statements END ;
+function           : DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON statements END ;
 
-class_function     : DEF IDENTIFIER '(' SELF (',' function_parameter)? '):' statements END;
+class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RBRACKET COLON statements END;
 
-class              : CLASS IDENTIFIER (':' | '(' IDENTIFIER '):') class_function* END;
+class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
 
 statement          : expression
                    | assignment
@@ -67,7 +67,7 @@ statement          : expression
                    | function
                    | return
                    | class
-                   | 'pass'
+                   | PASS
                    ;
                    
 statements         : statement+? ;
@@ -77,6 +77,7 @@ RBRACKET           : ')';
 ASSIGN             : '=';
 COLON              : ':';
 DOT                : '.';
+COMMA              : ',';
 
 MULTIPLY           : '*';
 DIVIDE             : '/';
@@ -90,12 +91,13 @@ LOWER_EQUALS       : '>=';
 LOWER_THAN         : '<';
 GREATER_THAN       : '>';
                    
+PASS               : 'pass';
 SELF               : 'self';
 RETURN             : 'return';
 WHILE              : 'while';
 IF                 : 'if';
 ELIF               : 'elif';
-ELSE               : 'else:';
+ELSE               : 'else';
 CLASS              : 'class';
 DEF                : 'def';
 
