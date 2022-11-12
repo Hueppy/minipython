@@ -123,6 +123,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitStart(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitStart(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final StartContext start() throws RecognitionException {
@@ -165,6 +170,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitIdentifier(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitIdentifier(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -271,6 +281,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitCall_parameter(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitCall_parameter(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Call_parameterContext call_parameter() throws RecognitionException {
@@ -352,6 +367,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitCall(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitCall(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final CallContext call() throws RecognitionException {
@@ -424,6 +444,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitExpression(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitExpression(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -691,6 +716,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitAssignment(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitAssignment(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final AssignmentContext assignment() throws RecognitionException {
@@ -736,6 +766,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitReturn(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitReturn(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final ReturnContext return_() throws RecognitionException {
@@ -780,6 +815,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitCondition(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitCondition(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -847,6 +887,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitLoop(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitLoop(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final LoopContext loop() throws RecognitionException {
@@ -897,6 +942,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitIf_statement(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitIf_statement(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final If_statementContext if_statement() throws RecognitionException {
@@ -945,6 +995,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitElif_statement(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitElif_statement(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Elif_statementContext elif_statement() throws RecognitionException {
@@ -990,6 +1045,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitElse_statement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitElse_statement(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1044,6 +1104,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitConditional(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitConditional(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1116,6 +1181,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitFunction_parameter(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitFunction_parameter(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1196,6 +1266,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitFunction(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitFunction(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final FunctionContext function() throws RecognitionException {
@@ -1260,6 +1335,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitClass_function(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitClass_function(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1339,6 +1419,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitClass(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitClass(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1442,6 +1527,11 @@ public class MiniPythonParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitStatement(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitStatement(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final StatementContext statement() throws RecognitionException {
@@ -1539,6 +1629,11 @@ public class MiniPythonParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof MiniPythonListener ) ((MiniPythonListener)listener).exitStatements(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof MiniPythonVisitor ) return ((MiniPythonVisitor<? extends T>)visitor).visitStatements(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
