@@ -1,3 +1,5 @@
+package org.compilerbau.minipython;
+
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 

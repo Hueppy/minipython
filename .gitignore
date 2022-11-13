@@ -1,4 +1,5 @@
-*.class
+.idea
+target
+
 *.iml
-.idea/
-out/
+.attach*
