@@ -6,33 +6,30 @@ public class MyListener extends MiniPythonBaseListener {
     private void deleteNode(ParserRuleContext ctx) {
         int ctxParentIndex = ctx.getParent().children.indexOf(ctx);
 
-        for(ParseTree child : ctx.children) {
-            ctx.getParent().children.add(ctxParentIndex, child);
-        }
+        if(ctxParentIndex != -1) {
+            ctx.getParent().children.remove(ctxParentIndex);
 
-        ctx.getParent().children.remove(ctx);
+            for (int i = ctx.children.size() - 1; i >= 0; i--) {
+                ctx.getParent().children.add(ctxParentIndex, ctx.children.get(i));
+            }
+        }
     }
 
     @Override
     public void exitIdentifier(MiniPythonParser.IdentifierContext ctx) {
         ctx.children.removeIf(child -> child.getText().equals("."));
+
         deleteNode(ctx);
     }
 
-    @Override
-    public void enterExpression(MiniPythonParser.ExpressionContext ctx) {
-        ctx.children.removeIf(child -> child.getText().equals("(")
-          || child.getText().equals(")"));
-    }
 
     @Override
     public void exitExpression(MiniPythonParser.ExpressionContext ctx) {
-        // Expression mit genau ein Kind Knoten entfernen
-        if(ctx.getChildCount() == 1) {
-            int ctxParentIndex = ctx.getParent().children.indexOf(ctx);
+        ctx.children.removeIf(child -> child.getText().equals("(")
+          || child.getText().equals(")"));
 
-            ctx.getParent().children.add(ctxParentIndex, ctx.getChild(0));
-            ctx.getParent().children.remove(ctx);
+        if(ctx.getChildCount() == 1) {
+            deleteNode(ctx);
         }
     }
 
@@ -48,7 +45,7 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterFunction(MiniPythonParser.FunctionContext ctx) {
+    public void exitFunction(MiniPythonParser.FunctionContext ctx) {
         // #End entfernen
         ctx.removeLastChild();
 
@@ -60,7 +57,7 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterClass_function(MiniPythonParser.Class_functionContext ctx) {
+    public void exitClass_function(MiniPythonParser.Class_functionContext ctx) {
         // #End entfernen
         ctx.removeLastChild();
 
@@ -73,7 +70,7 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterClass(MiniPythonParser.ClassContext ctx) {
+    public void exitClass(MiniPythonParser.ClassContext ctx) {
         // #End entfernen
         ctx.removeLastChild();
 
@@ -85,16 +82,12 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterReturn(MiniPythonParser.ReturnContext ctx) {
-        // Return node entfernen
-        ctx.children.remove(0);
-
-        // Kind hoch ziehen
-        for(int i = 0; i<ctx.children.get(0).getChildCount(); i++) {
-            ctx.children.add(ctx.children.get(0).getChild(i));
+    public void exitReturn(MiniPythonParser.ReturnContext ctx) {
+        for (ParseTree child : ctx.children) {
+            if (child.getText().equals("return")) {
+                ctx.children.remove(child);
+            }
         }
-
-        ctx.children.remove(0);
     }
 
     @Override
@@ -106,7 +99,7 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterCall_parameter(MiniPythonParser.Call_parameterContext ctx) {
+    public void exitCall_parameter(MiniPythonParser.Call_parameterContext ctx) {
         // Bei mehreren Parametern die , entfernen
         if(ctx.getChildCount() > 0) {
             ctx.children.removeIf(child -> child.getText().equals(","));
@@ -114,7 +107,7 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterCall(MiniPythonParser.CallContext ctx) {
+    public void exitCall(MiniPythonParser.CallContext ctx) {
         ctx.children.removeIf(child -> child.getText().equals("(")
             || child.getText().equals(")"));
 
@@ -125,13 +118,13 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterConditional(MiniPythonParser.ConditionalContext ctx) {
+    public void exitConditional(MiniPythonParser.ConditionalContext ctx) {
         // #End entfernen
         ctx.removeLastChild();
     }
 
     @Override
-    public void enterLoop(MiniPythonParser.LoopContext ctx) {
+    public void exitLoop(MiniPythonParser.LoopContext ctx) {
         // #End entfernen
         ctx.removeLastChild();
 
@@ -139,19 +132,19 @@ public class MyListener extends MiniPythonBaseListener {
     }
 
     @Override
-    public void enterElse_statement(MiniPythonParser.Else_statementContext ctx) {
+    public void exitElse_statement(MiniPythonParser.Else_statementContext ctx) {
         ctx.children.removeIf(child -> child.getText().equals("else")
           || child.getText().equals(":"));
     }
 
     @Override
-    public void enterElif_statement(MiniPythonParser.Elif_statementContext ctx) {
+    public void exitElif_statement(MiniPythonParser.Elif_statementContext ctx) {
         ctx.children.removeIf(child -> child.getText().equals("elif")
             || child.getText().equals(":"));
     }
 
     @Override
-    public void enterIf_statement(MiniPythonParser.If_statementContext ctx) {
+    public void exitIf_statement(MiniPythonParser.If_statementContext ctx) {
         ctx.children.removeIf(child -> child.getText().equals("if")
             || child.getText().equals(":"));
     }
@@ -167,5 +160,10 @@ public class MyListener extends MiniPythonBaseListener {
         }
 
         ctx.children.remove(0);
+    }
+
+    @Override
+    public void exitStatements(MiniPythonParser.StatementsContext ctx) {
+        deleteNode(ctx);
     }
 }
