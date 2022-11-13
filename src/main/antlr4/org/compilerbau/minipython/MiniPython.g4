@@ -13,25 +13,25 @@ call_parameter     : expression (COMMA expression)*
                    ;
 call               : identifier LBRACKET call_parameter RBRACKET ;
 
-expression         : call
-                   | identifier
-                   | INT
-                   | STRING
-                   | BOOLEAN
-                   | LBRACKET expression RBRACKET
-                   | expression MULTIPLY expression
-                   | expression DIVIDE expression
-                   | expression ADD expression
-                   | expression SUBTRACT expression
-                   | expression EQUALS expression
-                   | expression NOT_EQUALS expression
-                   | expression GREATER_EQUALS expression
-                   | expression LOWER_EQUALS expression
-                   | expression GREATER_THAN expression
-                   | expression LOWER_THAN expression
-                   | NOT expression
-                   | expression AND expression
-                   | expression OR expression
+expression         : call                                 # CallExpression
+                   | identifier                           # VariableExpression
+                   | INT                                  # NumberExpression
+                   | STRING                               # TextExpression
+                   | BOOLEAN                              # TruthExpression
+                   | LBRACKET expression RBRACKET         # SubexpressionExpression
+                   | expression MULTIPLY expression       # MultiplicationExpression
+                   | expression DIVIDE expression         # DivisionExpression
+                   | expression ADD expression            # AdditionExpression
+                   | expression SUBTRACT expression       # SubtractionExpression
+                   | expression EQUALS expression         # EqualityExpression
+                   | expression NOT_EQUALS expression     # InequalityExpression
+                   | expression GREATER_EQUALS expression # GreaterEqualExpression
+                   | expression LESS_EQUALS expression    # LessEqualExpression
+                   | expression GREATER_THAN expression   # GreaterThanExpression
+                   | expression LESS_THAN expression      # LessThanExpression
+                   | NOT expression                       # NegationExpression
+                   | expression AND expression            # ConjunctionExpression
+                   | expression OR expression             # DisjunctionExpression
                    ;
 
 assignment         : identifier ASSIGN expression ;
@@ -86,10 +86,10 @@ SUBTRACT           : '-';
 
 EQUALS             : '==';
 NOT_EQUALS         : '!=';
-GREATER_EQUALS     : '<=';
-LOWER_EQUALS       : '>=';
-LOWER_THAN         : '<';
+GREATER_EQUALS     : '>=';
+LESS_EQUALS        : '<=';
 GREATER_THAN       : '>';
+LESS_THAN          : '<';
                    
 PASS               : 'pass';
 SELF               : 'self';

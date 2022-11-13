@@ -8,7 +8,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.compilerbau.minipython.ast.Program;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -18,12 +19,10 @@ public class Main {
         MiniPythonParser parser = new MiniPythonParser(tokens);
 
         ParseTree tree = parser.start();  // Start-Regel
+        AstVisitor visitor = new AstVisitor();
+        Program program = (Program) tree.accept(visitor);
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        MyListener eval = new MyListener();
-        walker.walk(eval, tree);
-
-        TreeViewer viewer2 = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-        viewer2.open();
+        TreeViewer viewer = new TreeViewer(Arrays.asList(), program);
+        viewer.open();
     }
 }
