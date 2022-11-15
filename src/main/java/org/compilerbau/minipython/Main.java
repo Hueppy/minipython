@@ -1,7 +1,6 @@
 package org.compilerbau.minipython;
 
 import java.util.Arrays;
-
 import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CharStream;
@@ -10,8 +9,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.compilerbau.minipython.ast.Program;
 import org.compilerbau.minipython.visitor.AstVisitor;
 import org.compilerbau.minipython.ast.Node;
+import org.compilerbau.minipython.visitor.PrintTree;
+import org.compilerbau.minipython.ast.Program;
+import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
 import org.compilerbau.minipython.visitor.PrintTree;
+import org.compilerbau.minipython.visitor.SymbolVisitor;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -29,10 +32,7 @@ public class Main {
         String printTree = new PrintTree().visit((Node) program);
 
         System.out.print(printTree);
-/*
-        TreeViewer viewer = new TreeViewer(Arrays.asList(parser.getRuleNames()), tree);
-        viewer.open();
 
- */
+        Scope globalScope = (Scope) new SymbolVisitor().visit(program);
     }
 }

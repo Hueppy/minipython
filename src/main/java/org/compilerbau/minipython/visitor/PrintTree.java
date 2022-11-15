@@ -25,6 +25,7 @@ public class PrintTree extends TraverseBase<String> {
                 calc += node;
             }
         }
+
         return calc;
     }
 
