@@ -13,7 +13,7 @@ public class SymbolVisitor extends TraverseBase {
     @Override
     public Object visit(Assignment node) {
 
-        Symbol type = (Symbol) visit(node.getExpression());
+        Symbol type = (Symbol) node.getExpression().accept(this);
 
         if(type != null) {
             scope.bind(new SymbolVariable(node.getIdentifier().getIdentifier(), type, scope));
@@ -29,7 +29,7 @@ public class SymbolVisitor extends TraverseBase {
         Iterator<Expression> it = node.getOperands().iterator();
 
         while(it.hasNext()) {
-           visit(it.next());
+           it.next().accept(this);
         }
 
         return null;
@@ -51,7 +51,7 @@ public class SymbolVisitor extends TraverseBase {
         scope = new Scope(scope);
 
         while(it.hasNext()) {
-            visit(it.next());
+            it.next().accept(this);
         }
 
         scope = scope.getEnclosingScope();
@@ -64,7 +64,7 @@ public class SymbolVisitor extends TraverseBase {
         Iterator<Expression> it = node.getOperands().iterator();
 
         while(it.hasNext()) {
-            visit(it.next());
+            it.next().accept(this);
         }
 
         return null;
@@ -102,14 +102,14 @@ public class SymbolVisitor extends TraverseBase {
 
     @Override
     public Object visit(Conditional node) {
-        visit(node.getCondition());
+        node.getCondition().accept(this);
 
         for(Statement statement : node.getIfBody()) {
-            visit(statement);
+            statement.accept(this);
         }
 
         for(Statement statement : node.getElseBody()) {
-            visit(statement);
+            statement.accept(this);
         }
 
         return null;
@@ -118,7 +118,7 @@ public class SymbolVisitor extends TraverseBase {
     @Override
     public Object visit(Connective node) {
         for(Expression operand : node.getOperands()) {
-            visit(operand);
+            operand.accept(this);
         }
 
         return null;
@@ -148,7 +148,7 @@ public class SymbolVisitor extends TraverseBase {
         }
 
         for(Statement statement : node.getBody()) {
-            visit(statement);
+            statement.accept(this);
         }
 
         scope = scope.getEnclosingScope();
@@ -158,12 +158,12 @@ public class SymbolVisitor extends TraverseBase {
 
     @Override
     public Object visit(Loop node) {
-        visit(node.getCondition());
+        node.getCondition().accept(this);
 
         scope = new Scope(scope);
 
         for(Statement statement : node.getBody()) {
-            visit(statement);
+            statement.accept(this);
         }
 
         scope = scope.getEnclosingScope();
@@ -178,7 +178,7 @@ public class SymbolVisitor extends TraverseBase {
         scope = globals;
 
         for(Statement statement : node.getStatements()) {
-            visit(statement);
+            statement.accept(this);
         }
 
         return scope;

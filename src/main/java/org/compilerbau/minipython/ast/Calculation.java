@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,5 +63,10 @@ public class Calculation extends Expression {
     @Override
     public String toStringTree() {
         return String.format("Calculation \"%s\"", operator.getSymbol());
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

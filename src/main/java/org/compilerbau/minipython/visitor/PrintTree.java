@@ -10,7 +10,7 @@ public class PrintTree extends TraverseBase<String> {
 
     @Override
     public String visit(Assignment node) {
-        return node.getIdentifier() + "=" + visit(node.getExpression());
+        return node.getIdentifier() + "=" + node.getExpression().accept(this);
     }
 
     @Override
@@ -19,7 +19,7 @@ public class PrintTree extends TraverseBase<String> {
         Iterator<Expression> it = node.getOperands().iterator();
 
         while(it.hasNext()) {
-            calc += visit(it.next());
+            calc += it.next().accept(this);
 
             if(it.hasNext()) {
                 calc += node;
@@ -35,7 +35,7 @@ public class PrintTree extends TraverseBase<String> {
         Iterator<Expression> it = node.getParameter().iterator();
 
         while(it.hasNext()) {
-            parameters += visit(it.next());
+            parameters += it.next().accept(this);
 
             if(it.hasNext()) {
                 parameters += ",";
@@ -52,7 +52,7 @@ public class PrintTree extends TraverseBase<String> {
         Iterator<Expression> it = node.getOperands().iterator();
 
         while(it.hasNext()) {
-            compare += visit(it.next());
+            compare += it.next().accept(this);
 
             if(it.hasNext()) {
                 compare += node;
@@ -79,15 +79,15 @@ public class PrintTree extends TraverseBase<String> {
         String elseBody = "";
 
         for(Statement statement : node.getIfBody()) {
-            ifBody += visit(statement) + "\n";
+            ifBody += statement.accept(this) + "\n";
         }
 
         for(Statement statement : node.getElseBody()) {
-            elseBody += visit(statement) + "\n";
+            elseBody += statement.accept(this) + "\n";
         }
 
         String print = "";
-        print = "if " + visit(node.getCondition()) + "\n" + ifBody;
+        print = "if " + node.getCondition().accept(this) + "\n" + ifBody;
 
         if(!elseBody.isEmpty()) print += "else\n" + elseBody;
 
@@ -97,7 +97,7 @@ public class PrintTree extends TraverseBase<String> {
     @Override
     public String visit(Connective node) {
         for(Expression operand : node.getOperands()) {
-            visit(operand);
+            operand.accept(this);
         }
 
         return node.getOperator().toString();
@@ -119,7 +119,7 @@ public class PrintTree extends TraverseBase<String> {
 
 
         for(Statement statement : node.getBody()) {
-            statements += visit(statement) + "\n";
+            statements += statement.accept(this) + "\n";
         }
 
         return "def " + node.getName() + " " + parameters + "\n" + statements;
@@ -130,10 +130,10 @@ public class PrintTree extends TraverseBase<String> {
         String statements = "";
 
         for(Statement statement : node.getBody()) {
-            statements += visit(statement) + "\n";
+            statements += statement.accept(this) + "\n";
         }
 
-        return "while " + visit(node.getCondition()) + "\n" + statements;
+        return "while " + node.getCondition().accept(this) + "\n" + statements;
     }
 
     @Override
@@ -141,7 +141,7 @@ public class PrintTree extends TraverseBase<String> {
         String program = "";
 
         for(Statement statement : node.getStatements()) {
-            program += visit(statement) + "\n";
+            program += statement.accept(this) + "\n";
         }
 
         return program;
@@ -169,6 +169,6 @@ public class PrintTree extends TraverseBase<String> {
 
     @Override
     public String visit(Return node) {
-        return "return " + visit(node.getExpression());
+        return "return " + node.getExpression().accept(this);
     }
 }

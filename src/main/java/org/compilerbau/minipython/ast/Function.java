@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,5 +47,10 @@ public class Function extends Statement {
     @Override
     public String toStringTree() {
         return String.format("Function \"%s\" %s", name, parameter);
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }
