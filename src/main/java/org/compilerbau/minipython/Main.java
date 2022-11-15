@@ -1,17 +1,16 @@
 package org.compilerbau.minipython;
 
-import java.util.Arrays;
 import org.antlr.v4.gui.TreeViewer;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.compilerbau.minipython.ast.Program;
 import org.compilerbau.minipython.visitor.AstParseTreeVisitor;
-import org.compilerbau.minipython.ast.Node;
 import org.compilerbau.minipython.visitor.PrintTree;
-import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.SymbolVisitor;
+
+import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -30,6 +29,6 @@ public class Main {
 
         System.out.print(printTree);
 
-        Scope globalScope = (Scope) new SymbolVisitor().visit(program);
+        new SymbolVisitor().visit(program);
     }
 }

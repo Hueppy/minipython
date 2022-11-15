@@ -1,35 +1,35 @@
 package org.compilerbau.minipython.symbol;
 import java.util.*;
 
-public class Scope {
-    private Scope enclosingScope;
-    private LinkedHashMap<String, Symbol> symbols;
-    public Scope(Scope enclosingScope) {
-        this.enclosingScope = enclosingScope;
-        this.symbols = new LinkedHashMap<>();
+public final class Scope {
+    private final List<Scope> parents;
+    private final Map<String, Symbol> symbols;
+    public Scope() {
+        parents = new ArrayList<>();
+        symbols = new LinkedHashMap<>();
     }
 
-    public void bind(Symbol symbol) {
-        symbols.put(symbol.getName(), symbol);
-        symbol.setScope(this);
+    public void bind(String name, Symbol symbol) {
+        symbols.put(name, symbol);
     }
 
     public Symbol resolve(String name) {
-        if (symbols.containsKey(name)) return symbols.get(name);
-
-        try {
-            return enclosingScope.resolve(name);
-        } catch (Exception e) {
-            return null;
+        if (symbols.containsKey(name)) {
+            return symbols.get(name);
+        } else {
+            for (Scope parent: parents) {
+                Symbol symbol = parent.resolve(name);
+                if (symbol != null) {
+                    return symbol;
+                }
+            }
         }
+
+        return null;
     }
 
-    public void setEnclosingScope(Scope enclosingScope) {
-        this.enclosingScope = enclosingScope;
-    }
-
-    public Scope getEnclosingScope() {
-        return enclosingScope;
+    public List<Scope> getParents() {
+        return parents;
     }
 
     public Map<String, Symbol> getSymbols() {

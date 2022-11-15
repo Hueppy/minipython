@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
@@ -10,6 +11,9 @@ public class Conditional extends Statement {
     private Expression condition;
     private final List<Statement> ifBody;
     private final List<Statement> elseBody;
+
+    private Scope ifBodyScope;
+    private Scope elseBodyScope;
 
     public Conditional() {
         ifBody = new ArrayList<>();
@@ -56,5 +60,21 @@ public class Conditional extends Statement {
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    public Scope getIfBodyScope() {
+        return ifBodyScope;
+    }
+
+    public void setIfBodyScope(Scope ifBodyScope) {
+        this.ifBodyScope = ifBodyScope;
+    }
+
+    public Scope getElseBodyScope() {
+        return elseBodyScope;
+    }
+
+    public void setElseBodyScope(Scope elseBodyScope) {
+        this.elseBodyScope = elseBodyScope;
     }
 }

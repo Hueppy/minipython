@@ -1,187 +1,131 @@
 package org.compilerbau.minipython.visitor;
 
 import org.compilerbau.minipython.ast.*;
-import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
 import org.compilerbau.minipython.symbol.*;
+import org.compilerbau.minipython.symbol.Class;
+import org.compilerbau.minipython.symbol.Function;
 
 import java.util.Iterator;
+import java.util.function.Supplier;
 
-public class SymbolVisitor extends AstVisitorBase {
+public class SymbolVisitor extends AstVisitorBase<Object> {
     Scope scope;
+
+    private Symbol nest(Supplier<Symbol> action) {
+        Scope parent = scope;
+        scope = new Scope();
+        if (parent != null) {
+            scope.getParents().add(parent);
+        }
+
+        Symbol symbol = action.get();
+
+        scope = parent;
+        return symbol;
+    }
 
     @Override
     public Object visit(Assignment node) {
-
-        Symbol type = (Symbol) node.getExpression().accept(this);
-
-        if(type != null) {
-            scope.bind(new SymbolVariable(node.getIdentifier().getIdentifier(), type, scope));
-        } else {
-            scope.bind(new SymbolVariable(node.getIdentifier().getIdentifier(), null, scope));
-        }
+        scope.bind(node.getIdentifier().getIdentifier(), new Variable());
 
         return null;
     }
 
     @Override
-    public Object visit(Calculation node) {
-        Iterator<Expression> it = node.getOperands().iterator();
+    public Object visit(org.compilerbau.minipython.ast.Class node) {
+        scope.bind(node.getName(), nest(() -> {
+            String baseName = node.getBase();
+            if(baseName != null) {
+                Class parent = (Class) scope.resolve(baseName);
+                if(parent == null) {
+                    throw new RuntimeException("Class " + baseName + " doesn't exist");
+                }
 
-        while(it.hasNext()) {
-           it.next().accept(this);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object visit(Call node) {
-        String name = node.getIdentifier().getIdentifier();
-        Symbol func = scope.resolve(name);
-
-        if(func == null) {
-            throw new RuntimeException("Function " + name + "() doesn't exist");
-        } else if(func instanceof SymbolVariable) {
-            throw new RuntimeException("Can't call " + name + " because it's a variable");
-        }
-
-        Iterator<Expression> it = node.getParameter().iterator();
-
-        scope = new Scope(scope);
-
-        while(it.hasNext()) {
-            it.next().accept(this);
-        }
-
-        scope = scope.getEnclosingScope();
-
-        return func;
-    }
-
-    @Override
-    public Object visit(Comparison node) {
-        Iterator<Expression> it = node.getOperands().iterator();
-
-        while(it.hasNext()) {
-            it.next().accept(this);
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object visit(Class node) {
-        String name = node.getName();
-        String baseName = node.getBase();
-        SymbolClass parentClass = null;
-
-        if(baseName != null) {
-            SymbolClass symbolClass = (SymbolClass) scope.resolve(baseName);
-
-            if(symbolClass == null) {
-                throw new RuntimeException("Class " + baseName + " doesn't exist");
+                scope.getParents().add(parent.getScope());
             }
 
-            parentClass = symbolClass;
-        }
+            for(org.compilerbau.minipython.ast.Function function : node.getFunctions()) {
+                function.accept(this);
+            }
 
-        Symbol symbolClass = new SymbolClass(name, scope, null, parentClass);
-        scope.bind(symbolClass);
+            node.setScope(scope);
 
-        scope = (Scope) symbolClass;
+            return new Class(scope);
+        }));
 
-        for(Function function : node.getFunctions()) {
-            visit(function);
-        }
-
-        scope = scope.getEnclosingScope();
-
-        return symbolClass;
+        return null;
     }
 
     @Override
     public Object visit(Conditional node) {
-        node.getCondition().accept(this);
+        nest(() -> {
+            for(Statement statement : node.getIfBody()) {
+                statement.accept(this);
+            }
 
-        for(Statement statement : node.getIfBody()) {
-            statement.accept(this);
-        }
+            node.setIfBodyScope(scope);
 
-        for(Statement statement : node.getElseBody()) {
-            statement.accept(this);
-        }
+            return null;
+        });
+        nest(() -> {
+            for(Statement statement : node.getElseBody()) {
+                statement.accept(this);
+            }
+
+            node.setElseBodyScope(scope);
+
+            return null;
+        });
 
         return null;
     }
 
     @Override
-    public Object visit(Connective node) {
-        for(Expression operand : node.getOperands()) {
-            operand.accept(this);
-        }
+    public Object visit(org.compilerbau.minipython.ast.Function node) {
+        scope.bind(node.getName(), nest(() -> {
+            for (Statement statement: node.getBody()) {
+                statement.accept(this);
+            }
 
-        return null;
-    }
+            node.setScope(scope);
 
-    @Override
-    public Object visit(Function node) {
-        String name = node.getName();
-        SymbolFunction func = new SymbolFunction(name, null, scope);
-
-        Symbol symbol = scope.resolve(name);
-
-        if(symbol != null) {
-            throw new RuntimeException("Name " + name + " is already taken or declared");
-        }
-
-        scope.bind(func);
-
-        Iterator<String> it = node.getParameter().iterator();
-
-        scope = func;
-
-        while(it.hasNext()) {
-            String parameter = it.next();
-            SymbolVariable var = new SymbolVariable(parameter, null, scope);
-            scope.bind(var);
-        }
-
-        for(Statement statement : node.getBody()) {
-            statement.accept(this);
-        }
-
-        scope = scope.getEnclosingScope();
+            return new Function(scope);
+        }));
 
         return null;
     }
 
     @Override
     public Object visit(Loop node) {
-        node.getCondition().accept(this);
+        nest(() -> {
+            for(Statement statement : node.getBody()) {
+                statement.accept(this);
+            }
 
-        scope = new Scope(scope);
+            node.setScope(scope);
 
-        for(Statement statement : node.getBody()) {
-            statement.accept(this);
-        }
-
-        scope = scope.getEnclosingScope();
+            return null;
+        });
 
         return null;
     }
 
     @Override
     public Object visit(Program node) {
-        Scope globals = new Scope(null);
-        globals.bind(new BuiltIn("print"));
-        scope = globals;
+        nest(() -> {
+            scope.bind("print", new BuiltIn());
 
-        for(Statement statement : node.getStatements()) {
-            statement.accept(this);
-        }
+            for(Statement statement : node.getStatements()) {
+                statement.accept(this);
+            }
 
-        return scope;
+            node.setScope(scope);
+
+            return null;
+        });
+
+        return null;
     }
 
     @Override

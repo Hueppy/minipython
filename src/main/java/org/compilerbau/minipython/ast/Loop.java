@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.List;
 public class Loop extends Statement {
     private Expression condition;
     private final List<Statement> body;
+    private Scope scope;
 
     public Loop() {
         body = new ArrayList<>();
@@ -47,5 +49,13 @@ public class Loop extends Statement {
     @Override
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 }
