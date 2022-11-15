@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Comparison extends Expression {
-    public static enum Operator {
+    public enum Operator {
         Equality,
         Inequality,
         GreaterEqual,
@@ -34,8 +34,6 @@ public class Comparison extends Expression {
             }
         }
     }
-
-    ;
 
     private Operator operator;
     private final List<Expression> operands;

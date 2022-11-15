@@ -1,11 +1,8 @@
 package org.compilerbau.minipython.visitor;
 
-import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
-
-import java.util.Arrays;
-import java.util.Iterator;
+import org.compilerbau.minipython.ast.*;
 
 public class PrintTree extends AstVisitorBase<String> {
 

@@ -1,11 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
-import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Conditional extends Statement {
     private Expression condition;

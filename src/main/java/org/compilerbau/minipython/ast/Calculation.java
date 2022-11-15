@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Calculation extends Expression {
-    public static enum Operator {
+    public enum Operator {
         Multiplication,
         Division,
         Addition,
@@ -28,8 +28,6 @@ public class Calculation extends Expression {
             }
         }
     }
-
-    ;
 
     private Operator operator;
     private final List<Expression> operands;

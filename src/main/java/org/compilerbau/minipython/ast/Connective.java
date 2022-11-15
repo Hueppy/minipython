@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Connective extends Expression {
-    public static enum Operator {
+    public enum Operator {
         And,
         Or;
 
@@ -22,8 +22,6 @@ public class Connective extends Expression {
             }
         }
     }
-
-    ;
 
     private Operator operator;
     private final List<Expression> operands;

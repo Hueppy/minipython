@@ -10,7 +10,7 @@ import org.compilerbau.minipython.visitor.AstParseTreeVisitor;
 import org.compilerbau.minipython.visitor.PrintTree;
 import org.compilerbau.minipython.visitor.SymbolVisitor;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -23,7 +23,7 @@ public class Main {
         AstParseTreeVisitor visitor = new AstParseTreeVisitor();
         Program program = (Program) tree.accept(visitor);
 
-        TreeViewer viewer = new TreeViewer(Arrays.asList(), program);
+        TreeViewer viewer = new TreeViewer(Collections.emptyList(), program);
         viewer.open();
         String printTree = program.accept(new PrintTree());
 

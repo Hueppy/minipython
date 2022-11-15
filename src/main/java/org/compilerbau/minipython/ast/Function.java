@@ -4,7 +4,6 @@ import org.antlr.v4.runtime.tree.Tree;
 import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Function extends Statement {
