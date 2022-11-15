@@ -58,17 +58,15 @@ public class PrintTree extends AstVisitorBase<String> {
 
     @Override
     public String visit(Conditional node) {
-        return String.format("if %s {\n%s\n} else {\n%s\n}",
+        String text = String.format("if %s %s",
                 node.getCondition().accept(this),
-                node.getIfBody().stream()
-                        .map(x -> x.accept(this))
-                        .reduce((x, y) -> String.format("x\ny", x, y))
-                        .orElse(""),
-                node.getElseBody().stream()
-                        .map(x -> x.accept(this))
-                        .reduce((x, y) -> String.format("x\ny", x, y))
-                        .orElse("")
-        );
+                node.getIfBody().accept(this));
+
+        if (node.getElseBody() != null) {
+            text = String.format("%s else %s", text, node.getElseBody().accept(this));
+        }
+
+        return text;
     }
 
     @Override
@@ -84,10 +82,7 @@ public class PrintTree extends AstVisitorBase<String> {
         return String.format("def %s(%s) {\n%s\n}",
                 node.getName(),
                 String.join(", ", node.getParameter()),
-                node.getBody().stream()
-                        .map(x -> x.accept(this))
-                        .reduce((x, y) -> String.format("%s\n%s", x, y))
-                        .orElse("")
+                node.getBody().accept(this)
         );
     }
 
@@ -95,19 +90,13 @@ public class PrintTree extends AstVisitorBase<String> {
     public String visit(Loop node) {
         return String.format("while %s {\n%s\n}",
                 node.getCondition().accept(this),
-                node.getBody().stream()
-                        .map(x -> x.accept(this))
-                        .reduce((x, y) -> String.format("%s\n%s", x, y))
-                        .orElse("")
+                node.getBody().accept(this)
         );
     }
 
     @Override
     public String visit(Program node) {
-        return node.getStatements().stream()
-                .map(x -> x.accept(this))
-                .reduce((x, y) -> String.format("%s\n%s", x, y))
-                .orElse("");
+        return node.getBlock().accept(this);
     }
 
     @Override
@@ -133,5 +122,15 @@ public class PrintTree extends AstVisitorBase<String> {
     @Override
     public String visit(Return node) {
         return String.format("return %s", node.getExpression().accept(this));
+    }
+
+    @Override
+    public String visit(Block node) {
+        return String.format("{\n%s\n}",
+                node.getStatements().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("%s\n%s", x, y))
+                        .orElse("")
+        );
     }
 }

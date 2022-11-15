@@ -1,7 +1,6 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
-import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
@@ -12,13 +11,11 @@ public class Function extends Statement {
     private String name;
 
     private final List<String> parameter;
-    private final List<Statement> body;
 
-    private Scope scope;
+    private Block body;
 
     public Function() {
         parameter = new ArrayList<>();
-        body = new ArrayList<>();
     }
 
     public String getName() {
@@ -33,18 +30,14 @@ public class Function extends Statement {
         return parameter;
     }
 
-    public List<Statement> getBody() {
-        return body;
-    }
-
     @Override
     public int getChildCount() {
-        return body.size();
+        return 1;
     }
 
     @Override
     public Tree getChild(int i) {
-        return body.get(i);
+        return body;
     }
 
     @Override
@@ -57,11 +50,11 @@ public class Function extends Statement {
         return visitor.visit(this);
     }
 
-    public Scope getScope() {
-        return scope;
+    public Block getBody() {
+        return body;
     }
 
-    public void setScope(Scope scope) {
-        this.scope = scope;
+    public void setBody(Block body) {
+        this.body = body;
     }
 }

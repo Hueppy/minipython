@@ -1,12 +1,10 @@
 package org.compilerbau.minipython.visitor;
 
 import org.compilerbau.minipython.ast.*;
-import org.compilerbau.minipython.ast.Number;
 import org.compilerbau.minipython.symbol.*;
 import org.compilerbau.minipython.symbol.Class;
 import org.compilerbau.minipython.symbol.Function;
 
-import java.util.Iterator;
 import java.util.function.Supplier;
 
 public class SymbolVisitor extends AstVisitorBase<Object> {
@@ -59,54 +57,25 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(Conditional node) {
-        nest(() -> {
-            for(Statement statement : node.getIfBody()) {
-                statement.accept(this);
-            }
-
-            node.setIfBodyScope(scope);
-
-            return null;
-        });
-        nest(() -> {
-            for(Statement statement : node.getElseBody()) {
-                statement.accept(this);
-            }
-
-            node.setElseBodyScope(scope);
-
-            return null;
-        });
+        node.getIfBody().accept(this);
+        if (node.getElseBody() != null) {
+            node.getElseBody().accept(this);
+        }
 
         return null;
     }
 
     @Override
     public Object visit(org.compilerbau.minipython.ast.Function node) {
-        scope.bind(node.getName(), nest(() -> {
-            for (Statement statement: node.getBody()) {
-                statement.accept(this);
-            }
-
-            node.setScope(scope);
-
-            return new Function(scope);
-        }));
+        node.getBody().accept(this);
+        scope.bind(node.getName(), new Function(node.getBody().getScope()));
 
         return null;
     }
 
     @Override
     public Object visit(Loop node) {
-        nest(() -> {
-            for(Statement statement : node.getBody()) {
-                statement.accept(this);
-            }
-
-            node.setScope(scope);
-
-            return null;
-        });
+        node.getBody().accept(this);
 
         return null;
     }
@@ -116,6 +85,17 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
         nest(() -> {
             scope.bind("print", new BuiltIn());
 
+            node.getBlock().accept(this);
+
+            return null;
+        });
+
+        return null;
+    }
+
+    @Override
+    public Object visit(Block node) {
+        nest(() -> {
             for(Statement statement : node.getStatements()) {
                 statement.accept(this);
             }
@@ -125,38 +105,6 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
             return null;
         });
 
-        return null;
-    }
-
-    @Override
-    public Object visit(Number node) {
-        return null;
-    }
-
-    @Override
-    public Object visit(Text node) {
-        return null;
-    }
-
-    @Override
-    public Object visit(Truth node) {
-        return null;
-    }
-
-    @Override
-    public Object visit(Identifier node) {
-        String name = node.getIdentifier();
-        Symbol var = scope.resolve(name);
-
-        if(var == null) {
-            throw new RuntimeException("Variable " + name + " doesn't exist");
-        }
-
-        return null;
-    }
-
-    @Override
-    public Object visit(Return node) {
         return null;
     }
 }
