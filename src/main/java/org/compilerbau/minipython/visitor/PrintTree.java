@@ -4,147 +4,110 @@ import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
-public class PrintTree extends TraverseBase<String> {
+public class PrintTree extends AstVisitorBase<String> {
 
     @Override
     public String visit(Assignment node) {
-        return node.getIdentifier() + "=" + node.getExpression().accept(this);
+        return String.format("%s = %s",
+                node.getIdentifier().accept(this),
+                node.getExpression().accept(this)
+        );
     }
 
     @Override
     public String visit(Calculation node) {
-        String calc = "";
-        Iterator<Expression> it = node.getOperands().iterator();
-
-        while(it.hasNext()) {
-            calc += it.next().accept(this);
-
-            if(it.hasNext()) {
-                calc += node;
-            }
-        }
-
-        return calc;
+        return node.getOperands().stream()
+                .map(x -> x.accept(this))
+                .reduce((x, y) -> String.format("%s %s %s", x, node.getOperator().getSymbol(), y))
+                .orElse("");
     }
 
     @Override
     public String visit(Call node) {
-        String parameters = "";
-        Iterator<Expression> it = node.getParameter().iterator();
-
-        while(it.hasNext()) {
-            parameters += it.next().accept(this);
-
-            if(it.hasNext()) {
-                parameters += ",";
-            }
-        }
-
-        return node.getIdentifier().getIdentifier() + " " + parameters;
+        return String.format("%s(%s)",
+                node.getIdentifier().accept(this),
+                node.getParameter().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("%s, %s", x, y))
+                        .orElse("")
+        );
     }
 
     @Override
     public String visit(Comparison node) {
-        String compare = "";
-
-        Iterator<Expression> it = node.getOperands().iterator();
-
-        while(it.hasNext()) {
-            compare += it.next().accept(this);
-
-            if(it.hasNext()) {
-                compare += node;
-            }
-        }
-
-        return compare;
+        return node.getOperands().stream()
+                .map(x -> x.accept(this))
+                .reduce((x, y) -> String.format("%s %s %s", x, node.getOperator().getSymbol(), y))
+                .orElse("");
     }
 
     @Override
     public String visit(Class node) {
-        String functions = "";
-
-        for(Function function : node.getFunctions()) {
-            functions += visit(function);
-        }
-
-        return node.getName() + ":" + node.getBase() + "\n" + functions;
+        return String.format("class %s(%s) {\n%s\n}",
+                node.getName(),
+                node.getBase(),
+                node.getFunctions().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("%s\n%s", x, y))
+                        .orElse("")
+        );
     }
 
     @Override
     public String visit(Conditional node) {
-        String ifBody = "";
-        String elseBody = "";
-
-        for(Statement statement : node.getIfBody()) {
-            ifBody += statement.accept(this) + "\n";
-        }
-
-        for(Statement statement : node.getElseBody()) {
-            elseBody += statement.accept(this) + "\n";
-        }
-
-        String print = "";
-        print = "if " + node.getCondition().accept(this) + "\n" + ifBody;
-
-        if(!elseBody.isEmpty()) print += "else\n" + elseBody;
-
-        return print;
+        return String.format("if %s {\n%s\n} else {\n%s\n}",
+                node.getCondition().accept(this),
+                node.getIfBody().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("x\ny", x, y))
+                        .orElse(""),
+                node.getElseBody().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("x\ny", x, y))
+                        .orElse("")
+        );
     }
 
     @Override
     public String visit(Connective node) {
-        for(Expression operand : node.getOperands()) {
-            operand.accept(this);
-        }
-
-        return node.getOperator().toString();
+        return node.getOperands().stream()
+                .map(x -> x.accept(this))
+                .reduce((x, y) -> String.format("%s %s %s", x, node.getOperator().getSymbol(), y))
+                .orElse("");
     }
 
     @Override
     public String visit(Function node) {
-        String parameters = "";
-        String statements = "";
-        Iterator<String> it = node.getParameter().iterator();
-
-        while(it.hasNext()) {
-            parameters += it.next();
-
-            if(it.hasNext()) {
-                parameters += ",";
-            }
-        }
-
-
-        for(Statement statement : node.getBody()) {
-            statements += statement.accept(this) + "\n";
-        }
-
-        return "def " + node.getName() + " " + parameters + "\n" + statements;
+        return String.format("def %s(%s) {\n%s\n}",
+                node.getName(),
+                String.join(", ", node.getParameter()),
+                node.getBody().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("%s\n%s", x, y))
+                        .orElse("")
+        );
     }
 
     @Override
     public String visit(Loop node) {
-        String statements = "";
-
-        for(Statement statement : node.getBody()) {
-            statements += statement.accept(this) + "\n";
-        }
-
-        return "while " + node.getCondition().accept(this) + "\n" + statements;
+        return String.format("while %s {\n%s\n}",
+                node.getCondition().accept(this),
+                node.getBody().stream()
+                        .map(x -> x.accept(this))
+                        .reduce((x, y) -> String.format("%s\n%s", x, y))
+                        .orElse("")
+        );
     }
 
     @Override
     public String visit(Program node) {
-        String program = "";
-
-        for(Statement statement : node.getStatements()) {
-            program += statement.accept(this) + "\n";
-        }
-
-        return program;
+        return node.getStatements().stream()
+                .map(x -> x.accept(this))
+                .reduce((x, y) -> String.format("%s\n%s", x, y))
+                .orElse("");
     }
 
     @Override
@@ -169,6 +132,6 @@ public class PrintTree extends TraverseBase<String> {
 
     @Override
     public String visit(Return node) {
-        return "return " + node.getExpression().accept(this);
+        return String.format("return %s", node.getExpression().accept(this));
     }
 }

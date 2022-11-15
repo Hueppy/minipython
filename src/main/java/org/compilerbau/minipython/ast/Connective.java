@@ -11,7 +11,7 @@ public class Connective extends Expression {
         And,
         Or;
 
-        String getSymbol() {
+        public String getSymbol() {
             switch (this) {
                 case Or:
                     return "or";

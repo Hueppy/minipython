@@ -13,7 +13,7 @@ public class Calculation extends Expression {
         Addition,
         Subtraction;
 
-        String getSymbol() {
+        public String getSymbol() {
             switch (this) {
                 case Multiplication:
                     return "*";

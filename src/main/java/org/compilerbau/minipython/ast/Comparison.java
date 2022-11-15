@@ -15,7 +15,7 @@ public class Comparison extends Expression {
         GreaterThan,
         LessThan;
 
-        String getSymbol() {
+        public String getSymbol() {
             switch (this) {
                 case Equality:
                     return "==";

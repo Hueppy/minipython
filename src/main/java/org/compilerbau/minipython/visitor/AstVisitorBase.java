@@ -4,7 +4,7 @@ import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
 
-public abstract class TraverseBase<T> implements AstVisitor<T> {
+public abstract class AstVisitorBase<T> implements AstVisitor<T> {
     public T visit(Assignment node) { return null; };
     public T visit(Calculation node) { return null; };
     public T visit(Call node) { return null; };

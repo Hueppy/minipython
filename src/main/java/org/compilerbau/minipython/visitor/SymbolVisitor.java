@@ -7,7 +7,7 @@ import org.compilerbau.minipython.symbol.*;
 
 import java.util.Iterator;
 
-public class SymbolVisitor extends TraverseBase {
+public class SymbolVisitor extends AstVisitorBase {
     Scope scope;
 
     @Override
