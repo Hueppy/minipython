@@ -25,10 +25,10 @@ public class Main {
 
         TreeViewer viewer = new TreeViewer(Collections.emptyList(), program);
         viewer.open();
-        String printTree = program.accept(new PrintTree());
-
-        System.out.print(printTree);
 
         new SymbolVisitor().visit(program);
+
+        String printTree = program.accept(new PrintTree());
+        System.out.print(printTree);
     }
 }

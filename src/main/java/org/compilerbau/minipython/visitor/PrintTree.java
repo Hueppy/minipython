@@ -123,7 +123,13 @@ public class PrintTree extends AstVisitorBase<String> {
 
     @Override
     public String visit(Block node) {
-        return String.format("{\n%s\n}",
+        String scope = "";
+        if (node.getScope() != null) {
+            scope = String.join(", ", node.getScope().getSymbols().keySet());
+        }
+
+        return String.format("{ [%s]\n%s\n}",
+                scope,
                 node.getStatements().stream()
                         .map(x -> x.accept(this))
                         .reduce((x, y) -> String.format("%s\n%s", x, y))

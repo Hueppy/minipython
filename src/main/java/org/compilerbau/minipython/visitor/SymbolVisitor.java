@@ -25,7 +25,10 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(Assignment node) {
-        scope.bind(node.getIdentifier().getIdentifier(), new Variable());
+        String identifier = node.getIdentifier().getIdentifier();
+        if (scope.resolve(identifier) == null) {
+            scope.bind(node.getIdentifier().getIdentifier(), new Variable());
+        }
 
         return null;
     }
