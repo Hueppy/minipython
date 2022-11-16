@@ -70,8 +70,15 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(org.compilerbau.minipython.ast.Function node) {
-        node.getBody().accept(this);
-        scope.bind(node.getName(), new Function(node.getBody().getScope()));
+        scope.bind(node.getName(), nest(() -> {
+            for (String parameter: node.getParameter()) {
+                scope.bind(parameter, new Variable());
+            }
+
+            node.getBody().accept(this);
+            node.setScope(scope);
+            return new Function(scope);
+        }));
 
         return null;
     }

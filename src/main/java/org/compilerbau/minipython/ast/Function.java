@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ public class Function extends Statement {
     private final List<String> parameter;
 
     private Block body;
+
+    private Scope scope;
 
     public Function() {
         parameter = new ArrayList<>();
@@ -55,5 +58,13 @@ public class Function extends Statement {
 
     public void setBody(Block body) {
         this.body = body;
+    }
+
+    public Scope getScope() {
+        return scope;
+    }
+
+    public void setScope(Scope scope) {
+        this.scope = scope;
     }
 }

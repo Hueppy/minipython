@@ -76,9 +76,15 @@ public class PrintTree extends AstVisitorBase<String> {
 
     @Override
     public String visit(Function node) {
-        return String.format("def %s(%s) {\n%s\n}",
+        String scope = "";
+        if (node.getScope() != null) {
+            scope = String.join(", ", node.getScope().getSymbols().keySet());
+        }
+
+        return String.format("def %s(%s) { [%s]\n%s\n}",
                 node.getName(),
                 String.join(", ", node.getParameter()),
+                scope,
                 node.getBody().accept(this)
         );
     }
