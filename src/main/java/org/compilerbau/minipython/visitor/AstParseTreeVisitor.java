@@ -102,6 +102,13 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitNegationExpression(MiniPythonParser.NegationExpressionContext ctx) {
+        Negation negation = new Negation();
+        negation.setExpression((Expression) ctx.expression().accept(this));
+        return negation;
+    }
+
+    @Override
     public Node visitMultiplicationExpression(MiniPythonParser.MultiplicationExpressionContext ctx) {
         Calculation calculation = new Calculation();
         calculation.setOperator(Calculation.Operator.Multiplication);

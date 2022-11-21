@@ -75,6 +75,11 @@ public class PrintTree extends AstVisitorBase<String> {
     }
 
     @Override
+    public String visit(Negation node) {
+        return String.format("not %s", node.getExpression().accept(this));
+    }
+
+    @Override
     public String visit(Function node) {
         String scope = "";
         if (node.getScope() != null) {

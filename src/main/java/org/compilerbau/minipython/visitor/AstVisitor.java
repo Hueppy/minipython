@@ -11,12 +11,11 @@ public interface AstVisitor<T> {
     T visit(org.compilerbau.minipython.ast.Class node);
     T visit(Conditional node);
     T visit(Connective node);
-    //T visit(Expression node);
+    T visit(Negation node);
     T visit(Function node);
     T visit(Loop node);
     T visit(Number node);
     T visit(Program node);
-    //T visit(Statement node);
     T visit(Text node);
     T visit(Truth node);
     T visit(Identifier node);
