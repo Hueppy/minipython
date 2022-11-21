@@ -1,17 +1,18 @@
 package org.compilerbau.minipython.visitor;
 
+import org.compilerbau.minipython.ast.Function;
 import org.compilerbau.minipython.ast.Number;
 import org.compilerbau.minipython.ast.*;
-import org.compilerbau.minipython.symbol.BuiltInFunction;
-import org.compilerbau.minipython.symbol.Scope;
-import org.compilerbau.minipython.symbol.Symbol;
-import org.compilerbau.minipython.symbol.Variable;
+import org.compilerbau.minipython.symbol.*;
+import org.compilerbau.minipython.symbol.Class;
 
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class InterpretingVisitor extends AstVisitorBase<Object> {
+    public static class InterpreterException extends RuntimeException {}
+
     private Scope scope;
 
     private Object enter(Scope scope, Supplier<Object> action) {
@@ -50,9 +51,9 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         Symbol symbol = scope.resolve(node);
         if (symbol instanceof Variable) {
             return ((Variable) symbol).getValue();
+        } else {
+            throw new InterpreterException();
         }
-
-        return null;
     }
 
     @Override
@@ -89,6 +90,8 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             }
         } else if (operands.stream().allMatch(x -> x instanceof String) && node.getOperator() == Calculation.Operator.Addition) {
             return operands.stream().reduce((x, y) -> x + (String)y).orElse("");
+        } else {
+            throw new InterpreterException();
         }
 
         return null;
@@ -138,6 +141,8 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                 case Inequality:
                     return operands.stream().reduce((x, y) -> (boolean) x != (boolean) y).orElse(true);
             }
+        } else {
+            throw new InterpreterException();
         }
 
         return null;
@@ -156,6 +161,8 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                 case Or:
                     return operands.stream().reduce((x, y) -> (boolean)x || (boolean) y).orElse(true);
             }
+        } else {
+            throw new InterpreterException();
         }
 
         return null;
@@ -167,9 +174,9 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
 
         if (expression instanceof Boolean) {
             return !(boolean)expression;
+        } else {
+            throw new InterpreterException();
         }
-
-        return null;
     }
 
     @Override
@@ -184,16 +191,21 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         Symbol symbol = scope.resolve(node.getIdentifier());
         if (symbol instanceof org.compilerbau.minipython.symbol.Function) {
             Function function = ((org.compilerbau.minipython.symbol.Function) symbol).getFunction();
+            if (function.getParameter().stream().anyMatch(s -> s.equals("self"))) {
+                parameter.add(0, ((Variable) scope.resolve(node.getIdentifier().removeLast())).getValue());
+            }
             return enter(function.getScope(), () -> {
                 bind(function.getParameter(), parameter);
                 return function.getBody().accept(this);
             });
+        } else if (symbol instanceof org.compilerbau.minipython.symbol.Class) {
+            return ((Class) symbol).instantiate();
         } else if (symbol instanceof BuiltInFunction) {
             BuiltInFunction function = (BuiltInFunction) symbol;
             return function.run(parameter);
+        } else {
+            throw new InterpreterException();
         }
-
-        return null;
     }
 
     @Override

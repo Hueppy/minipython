@@ -4,6 +4,7 @@ import org.compilerbau.minipython.ast.Identifier;
 import java.util.*;
 
 public final class Scope {
+    public static final Scope EMPTY = new Scope();
     private Scope parent;
     private final Map<String, Symbol> symbols;
     public Scope() {
