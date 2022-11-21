@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.compilerbau.minipython.ast.Program;
 import org.compilerbau.minipython.visitor.AstParseTreeVisitor;
+import org.compilerbau.minipython.visitor.InterpretingVisitor;
 import org.compilerbau.minipython.visitor.PrintTree;
 import org.compilerbau.minipython.visitor.SymbolVisitor;
 
@@ -26,9 +27,12 @@ public class Main {
         TreeViewer viewer = new TreeViewer(Collections.emptyList(), program);
         viewer.open();
 
-        new SymbolVisitor().visit(program);
+        program.accept(new SymbolVisitor());
 
         String printTree = program.accept(new PrintTree());
-        System.out.print(printTree);
+        System.out.println(printTree);
+
+        InterpretingVisitor interpreter = new InterpretingVisitor();
+        program.accept(interpreter);
     }
 }

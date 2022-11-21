@@ -8,7 +8,7 @@ import org.compilerbau.minipython.symbol.Function;
 import java.util.function.Supplier;
 
 public class SymbolVisitor extends AstVisitorBase<Object> {
-    Scope scope;
+    protected Scope scope;
 
     private Symbol nest(Supplier<Symbol> action) {
         Scope parent = scope;
@@ -77,7 +77,9 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
             node.getBody().accept(this);
             node.setScope(scope);
-            return new Function(scope);
+            Function function = new Function(scope);
+            function.setFunction(node);
+            return function;
         }));
 
         return null;
@@ -93,7 +95,8 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Program node) {
         nest(() -> {
-            scope.bind("print", new BuiltIn());
+            scope.bind("print", BuiltInFunction.PRINT);
+            scope.bind("input", BuiltInFunction.INPUT);
 
             node.getBlock().accept(this);
 

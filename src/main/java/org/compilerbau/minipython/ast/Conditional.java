@@ -60,4 +60,8 @@ public class Conditional extends Statement {
     public void setElseBody(Block elseBody) {
         this.elseBody = elseBody;
     }
+
+    public boolean hasElseBody() {
+        return this.elseBody != null;
+    }
 }

@@ -1,0 +1,31 @@
+package org.compilerbau.minipython.symbol;
+
+import java.util.List;
+import java.util.Scanner;
+
+public abstract class BuiltInFunction extends Symbol {
+    public static final BuiltInFunction PRINT = new BuiltInFunction() {
+        @Override
+        public Object run(List<Object> args) {
+            System.out.println(
+                    args.stream()
+                            .map(Object::toString)
+                            .reduce((x, y) -> String.join(" ", x, y))
+                            .orElse("")
+            );
+
+            return null;
+        }
+    };
+
+    public static final BuiltInFunction INPUT = new BuiltInFunction() {
+        private final Scanner scanner = new Scanner(System.in);
+
+        @Override
+        public Object run(List<Object> args) {
+            return scanner.nextLine();
+        }
+    };
+
+    public abstract Object run(List<Object> args);
+}
