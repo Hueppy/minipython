@@ -14,7 +14,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
         Scope parent = scope;
         scope = new Scope();
         if (parent != null) {
-            scope.getParents().add(parent);
+            scope.setParent(parent);
         }
 
         Symbol symbol = action.get();
@@ -43,7 +43,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
                     throw new RuntimeException("Class " + baseName + " doesn't exist");
                 }
 
-                scope.getParents().add(parent.getScope());
+                scope.setParent(parent.getScope());
             }
 
             for(org.compilerbau.minipython.ast.Function function : node.getFunctions()) {
