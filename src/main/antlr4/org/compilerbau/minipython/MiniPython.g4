@@ -2,10 +2,9 @@ grammar MiniPython;
 
 start              : statements ;
 
-identifier         : IDENTIFIER
-                   | SELF
-                   | identifier DOT IDENTIFIER
-                   | SELF DOT IDENTIFIER
+identifier         : IDENTIFIER                # BasicIdentifier
+                   | SELF                      # SelfIdentifier
+                   | identifier DOT IDENTIFIER # RecursiveIdentifier
                    ;
 
 call_parameter     : expression (COMMA expression)*

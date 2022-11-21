@@ -28,9 +28,26 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
-    public Node visitIdentifier(MiniPythonParser.IdentifierContext ctx) {
+    public Node visitBasicIdentifier(MiniPythonParser.BasicIdentifierContext ctx) {
         Identifier identifier = new Identifier();
-        identifier.setIdentifier(ctx.getText());
+        identifier.setIdentifier(ctx.IDENTIFIER().getText());
+        return identifier;
+    }
+
+    @Override
+    public Node visitSelfIdentifier(MiniPythonParser.SelfIdentifierContext ctx) {
+        Identifier identifier = new Identifier();
+        identifier.setIdentifier("self");
+        return identifier;
+    }
+
+    @Override
+    public Node visitRecursiveIdentifier(MiniPythonParser.RecursiveIdentifierContext ctx) {
+        Identifier next = new Identifier();
+        next.setIdentifier(ctx.IDENTIFIER().getText());
+
+        Identifier identifier = (Identifier) ctx.identifier().accept(this);
+        identifier.setNext(next);
         return identifier;
     }
 

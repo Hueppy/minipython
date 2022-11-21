@@ -1,7 +1,7 @@
 package org.compilerbau.minipython.symbol;
 
 
-public class Class extends Symbol {
+public class Class extends Symbol implements Scoped {
     private final Scope scope;
 
     public Class(Scope scope) {

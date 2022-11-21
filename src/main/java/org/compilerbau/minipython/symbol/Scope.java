@@ -1,4 +1,6 @@
 package org.compilerbau.minipython.symbol;
+import org.compilerbau.minipython.ast.Identifier;
+
 import java.util.*;
 
 public final class Scope {
@@ -12,6 +14,19 @@ public final class Scope {
         symbols.put(name, symbol);
     }
 
+    public void bind(Identifier identifier, Symbol symbol) {
+        Scope scope = this;
+
+        if (identifier.hasNext()) {
+            Symbol scoped = resolve(identifier.getIdentifier());
+            if (scoped instanceof Scoped) {
+                scope = ((Scoped) scoped).getScope();
+            }
+        }
+
+        scope.bind(identifier.getIdentifier(), symbol);
+    }
+
     public Symbol resolve(String name) {
         if (symbols.containsKey(name)) {
             return symbols.get(name);
@@ -20,6 +35,16 @@ public final class Scope {
         }
 
         return null;
+    }
+
+    public Symbol resolve(Identifier identifier) {
+        Symbol result = resolve(identifier.getIdentifier());
+
+        if (identifier.hasNext() && result instanceof Scoped) {
+            result = ((Scoped) result).getScope().resolve(identifier.getNext());
+        }
+
+        return result;
     }
 
     public Scope getParent() {
