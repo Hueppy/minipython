@@ -90,7 +90,7 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     @Override
     public Node visitTextExpression(MiniPythonParser.TextExpressionContext ctx) {
         Text text = new Text();
-        text.setValue(ctx.STRING().getText());
+        text.setValue(ctx.STRING().getText().replaceAll("^\"|^'|\"$|'$", ""));
         return text;
     }
 
