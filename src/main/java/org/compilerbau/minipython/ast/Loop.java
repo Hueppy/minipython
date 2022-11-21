@@ -1,17 +1,11 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Loop extends Statement {
     private Expression condition;
-    private final List<Statement> body;
-
-    public Loop() {
-        body = new ArrayList<>();
-    }
+    private Block body;
 
     public Expression getCondition() {
         return condition;
@@ -21,25 +15,38 @@ public class Loop extends Statement {
         this.condition = condition;
     }
 
-    public List<Statement> getBody() {
-        return body;
-    }
-
     @Override
     public int getChildCount() {
-        return 1 + body.size();
+        return body != null ? 2 : 1;
     }
 
     @Override
     public Tree getChild(int i) {
-        if (i-- == 0) {
-            return condition;
+        switch (i) {
+            case 0:
+                return condition;
+            case 1:
+                return body;
+            default:
+                return super.getChild(i);
         }
-        return body.get(i);
     }
 
     @Override
     public String toStringTree() {
         return "Loop";
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public Block getBody() {
+        return body;
+    }
+
+    public void setBody(Block body) {
+        this.body = body;
     }
 }

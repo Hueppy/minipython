@@ -1,16 +1,17 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Connective extends Expression {
-    public static enum Operator {
+    public enum Operator {
         And,
         Or;
 
-        String getSymbol() {
+        public String getSymbol() {
             switch (this) {
                 case Or:
                     return "or";
@@ -21,8 +22,6 @@ public class Connective extends Expression {
             }
         }
     }
-
-    ;
 
     private Operator operator;
     private final List<Expression> operands;
@@ -56,5 +55,10 @@ public class Connective extends Expression {
     @Override
     public String toStringTree() {
         return String.format("Connective \"%s\"", operator.getSymbol());
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

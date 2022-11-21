@@ -1,33 +1,39 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Program extends Node {
-    private final List<Statement> statements;
+    private Block block;
 
     public Program() {
-        statements = new ArrayList<>();
+        block = new Block();
     }
-
-    public List<Statement> getStatements() {
-        return statements;
-    }
-
     @Override
     public Tree getChild(int i) {
-        return statements.get(i);
+        return block;
     }
 
     @Override
     public int getChildCount() {
-        return statements.size();
+        return 1;
     }
 
     @Override
     public String toStringTree() {
         return "Program";
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public Block getBlock() {
+        return block;
+    }
+
+    public void setBlock(Block block) {
+        this.block = block;
     }
 }

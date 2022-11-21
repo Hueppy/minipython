@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Return extends Statement {
     private Expression expression;
@@ -26,5 +27,10 @@ public class Return extends Statement {
     @Override
     public String toStringTree() {
         return "Return";
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

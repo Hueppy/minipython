@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Assignment extends Statement {
     private Identifier identifier;
@@ -42,5 +43,10 @@ public class Assignment extends Statement {
     @Override
     public String toStringTree() {
         return "Assignment";
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

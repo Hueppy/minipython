@@ -1,18 +1,19 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Calculation extends Expression {
-    public static enum Operator {
+    public enum Operator {
         Multiplication,
         Division,
         Addition,
         Subtraction;
 
-        String getSymbol() {
+        public String getSymbol() {
             switch (this) {
                 case Multiplication:
                     return "*";
@@ -27,8 +28,6 @@ public class Calculation extends Expression {
             }
         }
     }
-
-    ;
 
     private Operator operator;
     private final List<Expression> operands;
@@ -62,5 +61,10 @@ public class Calculation extends Expression {
     @Override
     public String toStringTree() {
         return String.format("Calculation \"%s\"", operator.getSymbol());
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }

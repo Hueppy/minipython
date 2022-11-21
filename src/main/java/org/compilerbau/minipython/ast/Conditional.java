@@ -1,19 +1,12 @@
 package org.compilerbau.minipython.ast;
 
 import org.antlr.v4.runtime.tree.Tree;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.compilerbau.minipython.visitor.AstVisitor;
 
 public class Conditional extends Statement {
     private Expression condition;
-    private final List<Statement> ifBody;
-    private final List<Statement> elseBody;
-
-    public Conditional() {
-        ifBody = new ArrayList<>();
-        elseBody = new ArrayList<>();
-    }
+    private Block ifBody;
+    private Block elseBody;
 
     public Expression getCondition() {
         return condition;
@@ -23,32 +16,48 @@ public class Conditional extends Statement {
         this.condition = condition;
     }
 
-    public List<Statement> getIfBody() {
-        return ifBody;
-    }
-
-    public List<Statement> getElseBody() {
-        return elseBody;
-    }
-
     @Override
     public int getChildCount() {
-        return 1 + ifBody.size() + elseBody.size();
+        return 1 + (ifBody != null ? 1 : 0) + (elseBody != null ? 1 : 0);
     }
 
     @Override
     public Tree getChild(int i) {
-        if (i-- == 0) {
-            return condition;
+        switch (i) {
+            case 0:
+                return condition;
+            case 1:
+                return ifBody;
+            case 2:
+                return elseBody;
+            default:
+                return super.getChild(i);
         }
-        if (i < ifBody.size()) {
-            return ifBody.get(i);
-        }
-        return elseBody.get(i - ifBody.size());
     }
 
     @Override
     public String toStringTree() {
-        return String.format("Conditional");
+        return "Conditional";
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
+    }
+
+    public Block getIfBody() {
+        return ifBody;
+    }
+
+    public void setIfBody(Block ifBody) {
+        this.ifBody = ifBody;
+    }
+
+    public Block getElseBody() {
+        return elseBody;
+    }
+
+    public void setElseBody(Block elseBody) {
+        this.elseBody = elseBody;
     }
 }

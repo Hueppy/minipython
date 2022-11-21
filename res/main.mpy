@@ -4,15 +4,15 @@ print(a)
 
 a = 10 - 5
 a = "foo"
-func1(a, b)
+# func1(a, b)
 
 def func1(a, b):
     c = a + b
     return c == a + b
 #end
 
-func1(var1, 5)
-func1(func2(), 1 + 1)
+# func1(var1, 5)
+# func1(func2(), 1 + 1)
 
 1 == 1
 7 >= 1 + 2
@@ -58,7 +58,7 @@ if a < "adc":
 
 class A:
     def method_1(self):
-        print(self.a)
+        #print(self.a)
         print(self)
 
         return self
@@ -80,4 +80,4 @@ class B(A):
 #end
 
 a = B()
-a.setA(5)
+#a.setA(5)

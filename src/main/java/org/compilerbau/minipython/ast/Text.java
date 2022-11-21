@@ -1,5 +1,7 @@
 package org.compilerbau.minipython.ast;
 
+import org.compilerbau.minipython.visitor.AstVisitor;
+
 public class Text extends Expression {
     private String value;
 
@@ -14,5 +16,10 @@ public class Text extends Expression {
     @Override
     public String toStringTree() {
         return String.format("Text \"%s\"", value);
+    }
+
+    @Override
+    public <T> T accept(AstVisitor<T> visitor) {
+        return visitor.visit(this);
     }
 }
