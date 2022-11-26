@@ -88,14 +88,14 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                 case Multiplication:
                     return operands.stream().reduce((x, y) -> (int)x * (int)y).orElse(1);
                 case Division:
-                    return operands.stream().reduce((x, y) -> (int)x + (int)y).orElse(1);
+                    return operands.stream().reduce((x, y) -> (int)x / (int)y).orElse(1);
                 case Addition:
                     return operands.stream().reduce((x, y) -> (int)x + (int)y).orElse(0);
                 case Subtraction:
                     return operands.stream().reduce((x, y) -> (int)x - (int)y).orElse(0);
             }
-        } else if (operands.stream().allMatch(x -> x instanceof String) && node.getOperator() == Calculation.Operator.Addition) {
-            return operands.stream().reduce((x, y) -> x + (String)y).orElse("");
+        } else if (operands.stream().anyMatch(x -> x instanceof String) && node.getOperator() == Calculation.Operator.Addition) {
+            return operands.stream().reduce((x, y) -> x + y.toString()).orElse("");
         } else {
             throw new InterpreterException("Calculation error");
         }
