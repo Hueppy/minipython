@@ -48,6 +48,14 @@ public final class Scope {
         return result;
     }
 
+    public Symbol resolveLocally(String name) {
+        if (symbols.containsKey(name)) {
+            return symbols.get(name);
+        }
+
+        return null;
+    }
+
     public Scope getParent() {
         return parent;
     }

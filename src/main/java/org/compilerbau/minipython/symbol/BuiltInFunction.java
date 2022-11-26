@@ -1,6 +1,7 @@
 package org.compilerbau.minipython.symbol;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public abstract class BuiltInFunction extends Symbol {
@@ -8,10 +9,11 @@ public abstract class BuiltInFunction extends Symbol {
         @Override
         public Object run(List<Object> args) {
             System.out.println(
-                    args.stream()
-                            .map(Object::toString)
-                            .reduce((x, y) -> String.join(" ", x, y))
-                            .orElse("")
+                args.stream()
+                    .filter(Objects::nonNull)
+                    .map(Object::toString)
+                    .reduce((x, y) -> String.join(" ", x, y))
+                    .orElse("NULL")
             );
 
             return null;

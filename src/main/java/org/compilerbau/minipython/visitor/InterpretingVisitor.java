@@ -42,9 +42,30 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
     public Object visit(Assignment node) {
         super.visit(node);
 
-        Symbol symbol = scope.resolve(node.getIdentifier());
-        if (symbol instanceof Variable) {
-            ((Variable) symbol).setValue(node.getExpression().accept(this));
+        Symbol symbol;
+        if(node.getIdentifier().getIdentifier().equals("self")) {
+            if(node.getIdentifier().getNext() == null) {
+                throw new InterpreterException("Can't assign values directly to self");
+            }
+
+            symbol = scope.resolve(node.getIdentifier().getIdentifier());
+            String var = node.getIdentifier().getNext().getIdentifier();
+            Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
+
+            if(instance.getScope().resolveLocally(var) == null) {
+                instance.getScope().bind(var, new Variable());
+            }
+
+            Symbol selfSymbol = instance.getScope().resolveLocally(var);
+
+            if(selfSymbol instanceof Variable) {
+                ((Variable) selfSymbol).setValue(node.getExpression().accept(this));
+            }
+        } else {
+            symbol = scope.resolve(node.getIdentifier());
+            if (symbol instanceof Variable) {
+                ((Variable) symbol).setValue(node.getExpression().accept(this));
+            }
         }
 
         return null;
@@ -53,8 +74,16 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Identifier node) {
         Symbol symbol = scope.resolve(node);
+
         if (symbol instanceof Variable) {
             return ((Variable) symbol).getValue();
+        } else if (symbol == null && node.getIdentifier().equals("self")) {
+            // Bind class attribute if not found
+            symbol = scope.resolve(node.getIdentifier());
+            Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
+            instance.getScope().bind(node.getNext().getIdentifier(), new Variable());
+
+            return null;
         } else if (symbol == null) {
             throw new InterpreterException(node.getIdentifier() + " doesn't exist");
         } else {
@@ -200,6 +229,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             if (function.getParameter().stream().anyMatch(s -> s.equals("self"))) {
                 parameter.add(0, ((Variable) scope.resolve(node.getIdentifier().removeLast())).getValue());
             }
+
             return enter(function.getScope(), () -> {
                 bind(function.getParameter(), parameter);
                 return function.getBody().accept(this);
