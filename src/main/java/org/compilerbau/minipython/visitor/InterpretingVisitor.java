@@ -11,7 +11,11 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class InterpretingVisitor extends AstVisitorBase<Object> {
-    public static class InterpreterException extends RuntimeException {}
+    public static class InterpreterException extends RuntimeException {
+        public InterpreterException(String message) {
+            super(message);
+        }
+    }
 
     private Scope scope;
 
@@ -51,8 +55,10 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         Symbol symbol = scope.resolve(node);
         if (symbol instanceof Variable) {
             return ((Variable) symbol).getValue();
+        } else if (symbol == null) {
+            throw new InterpreterException(node.getIdentifier() + " doesn't exist");
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException(node.getIdentifier() + " is not a variable");
         }
     }
 
@@ -91,7 +97,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         } else if (operands.stream().allMatch(x -> x instanceof String) && node.getOperator() == Calculation.Operator.Addition) {
             return operands.stream().reduce((x, y) -> x + (String)y).orElse("");
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException("Calculation error");
         }
 
         return null;
@@ -142,7 +148,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                     return operands.stream().reduce((x, y) -> (boolean) x != (boolean) y).orElse(true);
             }
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException("Comparison error");
         }
 
         return null;
@@ -162,7 +168,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                     return operands.stream().reduce((x, y) -> (boolean)x || (boolean) y).orElse(true);
             }
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException("Connective error");
         }
 
         return null;
@@ -175,7 +181,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         if (expression instanceof Boolean) {
             return !(boolean)expression;
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException(node.getExpression() + " is not a boolean");
         }
     }
 
@@ -204,7 +210,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             BuiltInFunction function = (BuiltInFunction) symbol;
             return function.run(parameter);
         } else {
-            throw new InterpreterException();
+            throw new InterpreterException("Call error on " + node.getIdentifier());
         }
     }
 

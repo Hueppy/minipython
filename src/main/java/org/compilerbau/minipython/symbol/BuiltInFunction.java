@@ -23,7 +23,13 @@ public abstract class BuiltInFunction extends Symbol {
 
         @Override
         public Object run(List<Object> args) {
-            return scanner.nextLine();
+            String value = scanner.nextLine();
+
+            try {
+                return Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                return value;
+            }
         }
     };
 
