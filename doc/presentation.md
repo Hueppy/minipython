@@ -67,12 +67,13 @@ graph TD;
 ```
 
 # Symboltable
-informations about the source code
+hold informations about the source code
 * variables
 * function names
 * class names
 
 # Interpreter
+we can use the AST structure and the informations in the symbol table to execute the code
 
 # Test Cases
 ## Parameter handling
