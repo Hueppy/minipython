@@ -48,11 +48,29 @@ def methodB(self):
 #end
 ```
 # Abstract syntax tree
+## Funktion node
+```mermaid
+graph TD;
+  Function-->Identifier;
+  Function-->Parameter;
+  Parameter-->Identifiers;
+  Function-->Body;
+  Body-->Statements;
+```
+
+## Class node
+```mermaid
+graph TD;
+  Class-->Identifier;
+  Class-->Parent;
+  Class-->Functions;
+```
 
 # Symboltable
 informations about the source code
 * variables
 * function names
+* class names
 
 # Interpreter
 
