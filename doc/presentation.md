@@ -355,16 +355,32 @@ The interpreter should give information about the errors in the source code so t
 
 ## Examples
 
-Function already defined
-```Exception in thread "main" org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: Function setC() is already defined```
+ - Function already defined  
+```
+Exception in thread "main" 
+org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: 
+Function setC() is already defined
+```
 
-Variable doesn't exist
-```Exception in thread "main" org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: z doesn't exist```
+ - Variable doesn't exist  
+```
+Exception in thread "main" 
+org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: 
+z doesn't exist
+```
 
-Class already defined
-```Exception in thread "main" org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: Class D is already defined```
+---
+   
+ - Class already defined  
+```
+Exception in thread "main" 
+org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: 
+Class D is already defined
+```
 
-Calculation error ```a = "string" - 1```
-
-
-```Exception in thread "main" org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: Calculation error```
+ - Calculation error ```a = "string" - 1```  
+```
+Exception in thread "main" 
+org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: 
+Calculation error
+```
