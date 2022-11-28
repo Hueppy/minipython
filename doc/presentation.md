@@ -12,7 +12,7 @@ slide-level: 2
 ## Language
 
 - python subset
-- identation is not required
+- indentation is not required
 - blocks delimited by `#end`
 
 ## Features
