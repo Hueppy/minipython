@@ -39,7 +39,7 @@ We also want to define a class stukture
 class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RBRACKET COLON statements END;
 class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
 ```
-
+and use it in our sorce code
 ```python
 class B(A):
 def methodB(self):
@@ -47,11 +47,14 @@ def methodB(self):
 #end
 #end
 ```
+# Abstract syntax tree
 
-## Symbols
+# Symboltable
 informations about the source code
 * variables
 * function names
+
+# Interpreter
 
 # Test Cases
 ## Parameter handling
