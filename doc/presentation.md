@@ -21,7 +21,7 @@ ANTLR generatse a scanner from the given grammar for us so we can use the tokens
 # Syntactic analysis
 Arrange the tokens into a Parse Tree that represents the syntactic structure.
 
-## Funktions
+## Functions
 This syntactic structure describes a definition of a function,
 ```
 function           : DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON statements END ;
