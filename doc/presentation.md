@@ -88,4 +88,4 @@ setParam(a)
 ```
 
 # Perspective
-The interpreter should give detailed information about the errors in the source code so the developer will be able to find them easier 
+The interpreter should give detailed information about the errors in the source code so the developer will be able to find them easier.
