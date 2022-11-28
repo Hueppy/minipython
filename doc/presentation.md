@@ -44,11 +44,11 @@ while (a >= 0):
 ## Function with recursion
 ```python
 def f(a):
-  print(a)
-  if a > 0:
-    f(a - 1)
-  #end
-  print(a)
+    print(a)
+    if a > 0:
+        f(a - 1)
+    #end
+    print(a)
 #end
 
 f(10)
@@ -57,19 +57,19 @@ f(10)
 ## Classes with inheritance
 ```python 
 class A:
-  def set_a(self, a):
-    self.a = a
-  #end
+    def set_a(self, a):
+        self.a = a
+    #end
 
-  def get_a(self, a):
-    return self.a
-  #end
+    def get_a(self, a):
+        return self.a
+    #end
 #end
 
 class B(A):
-  def print_a(self):
-    print(self.a)
-  #end
+    def print_a(self):
+        print(self.a)
+    #end
 #end
 
 b = B()
@@ -109,7 +109,7 @@ function: DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON
 so we are able to encapsulate instructions with the following code
 ```python
 def functionA():
-  print("I am function A")
+    print("I am function A")
 #end
 ```
 
