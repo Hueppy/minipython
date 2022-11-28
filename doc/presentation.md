@@ -7,6 +7,8 @@ section-titles: true
 slide-level: 2
 ---
 
+![xkcd 303](https://imgs.xkcd.com/comics/compiling.png){height=75%}
+
 # Introduction
 
 ## Language
@@ -75,8 +77,7 @@ b.set_a(3)
 b.print_a()
 ```
 
-# Compiling
-![xkcd 303](https://imgs.xkcd.com/comics/compiling.png){height=75%}
+# Interpreter
 
 ## Overview
 ![Overview](overview.svg){height=75%}
