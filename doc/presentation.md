@@ -1,6 +1,9 @@
 # Compiling
 ![Compiling by xkcd](https://imgs.xkcd.com/comics/compiling.png)
 
+# Overview
+![Overview](https://github.com/Hueppy/minipython/blob/presentation/doc/overview.svg)
+
 # Lexical analysis
 converting a sequenc of characters from the sorce code into a sequence of tokens.
 ```
