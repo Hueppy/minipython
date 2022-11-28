@@ -349,20 +349,5 @@ public Object visit(Identifier node) {
 }
 ```
 
-# Test Cases
-## Parameter handling
-```python
-def setParam(b):
-  b = 4
-#end
-
-# ...
-
-a = 3
-setParam(a)
-
-# ...
-```
-
 # Perspective
 The interpreter should give detailed information about the errors in the source code so the developer able to find them easier 
