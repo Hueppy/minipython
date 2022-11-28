@@ -352,7 +352,7 @@ public Object visit(Identifier node) {
 # Error handling
 The interpreter should give information about the errors in the source code so the developer is able to find them easier 
 
-Examples
+## Examples
 
 Function already defined
 ```Exception in thread "main" org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: Function setC() is already defined```
