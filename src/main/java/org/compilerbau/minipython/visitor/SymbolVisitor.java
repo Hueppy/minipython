@@ -86,7 +86,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
         scope.bind(node.getName(), nest(() -> {
             for (String parameter: node.getParameter()) {
-                scope.bind(parameter, new Variable());
+                scope.bind(parameter, new Parameter());
             }
 
             node.getBody().accept(this);

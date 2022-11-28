@@ -29,11 +29,20 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
         return result;
     }
 
-    private void bind(List<String> names, List<Object> values) {
+    private void pushParameter(List<String> names, List<Object> values) {
         for (int i = 0; i < names.size(); i++) {
             Symbol param = scope.resolve(names.get(i));
-            if (param instanceof Variable) {
-                ((Variable) param).setValue(values.get(i));
+            if (param instanceof Parameter) {
+                ((Parameter) param).push(values.get(i));
+            }
+        }
+    }
+
+    private void popParameter(List<String> names) {
+        for (int i = 0; i < names.size(); i++) {
+            Symbol param = scope.resolve(names.get(i));
+            if (param instanceof Parameter) {
+                ((Parameter) param).pop();
             }
         }
     }
@@ -231,8 +240,10 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             }
 
             return enter(function.getScope(), () -> {
-                bind(function.getParameter(), parameter);
-                return function.getBody().accept(this);
+                pushParameter(function.getParameter(), parameter);
+                Object result = function.getBody().accept(this);
+                popParameter(function.getParameter());
+                return result;
             });
         } else if (symbol instanceof org.compilerbau.minipython.symbol.Class) {
             return ((Class) symbol).instantiate();
