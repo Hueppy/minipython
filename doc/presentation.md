@@ -73,7 +73,7 @@ hold informations about the source code
 * class names
 
 # Interpreter
-we can use the AST structure and the informationin the symbol table to execute the code
+we can use the ast structure to visit the nodes. With the additional information in the symbol table we can resolve the elements and execute the code
 
 # Test Cases
 ## Parameter handling
@@ -88,4 +88,4 @@ setParam(a)
 ```
 
 # Perspective
-The interpreter should give detailed information about the errors in the source code so the developer able to find them easier 
+The interpreter should give detailed information about the errors in the source code so the developer will be able to find them easier 
