@@ -241,42 +241,38 @@ The following steps are happening
 ---
 
 ```java
-public class InterpretingVisitor extends AstVisitorBase<Object> {
-    @Override
-    public Object visit(Assignment node) {
-        Symbol symbol;
-        if(node.getIdentifier().getIdentifier().equals("self")) {
-            // Handle self assignments
-        } else {
-            symbol = scope.resolve(node.getIdentifier());
-            if (symbol instanceof Variable) {
-                // Assign value to variable
-                ((Variable) symbol).setValue(node.getExpression().accept(this));
-            }
+public Object visit(Assignment node) {
+    Symbol symbol;
+    if(node.getIdentifier().getIdentifier().equals("self")) {
+        // Handle self assignments
+    } else {
+        symbol = scope.resolve(node.getIdentifier());
+        if (symbol instanceof Variable) {
+            // Assign value to variable
+            ((Variable) symbol).setValue(node.getExpression().accept(this));
         }
-
-        return null;
     }
+    return null;
+}
 ```
 
 ---
 
 ```java
-    @Override
-    public Object visit(Call node) {
-        /* ... */
-        Symbol symbol = scope.resolve(node.getIdentifier());
-        if (symbol instanceof org.compilerbau.minipython.symbol.Function) {
-            // Handle function symbol
-        } else if (symbol instanceof org.compilerbau.minipython.symbol.Class) {
-            return ((Class) symbol).instantiate();
-        } else if (symbol instanceof BuiltInFunction) {
-            // Handle BuiltIin functions
-        } else {
-            throw new InterpreterException("Call error on " + node.getIdentifier());
-        }
-    }
+@Override
+public Object visit(Call node) {
     /* ... */
+    Symbol symbol = scope.resolve(node.getIdentifier());
+    if (symbol instanceof org.compilerbau.minipython.symbol.Function) {
+        // Handle function symbol
+    } else if (symbol instanceof org.compilerbau.minipython.symbol.Class) {
+        return ((Class) symbol).instantiate();
+    } else if (symbol instanceof BuiltInFunction) {
+        // Handle BuiltIin functions
+    } else {
+        throw new InterpreterException("Call error on " 
+            + node.getIdentifier());
+    }
 }
 ```
 
@@ -314,7 +310,8 @@ public Object visit(Assignment node) {
     if(node.getIdentifier().getIdentifier().equals("self")) {
         Symbol symbol = scope.resolve(node.getIdentifier().getIdentifier()); 
         String var = node.getIdentifier().getNext().getIdentifier();
-        Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();    
+        Class.Instance instance = 
+            (Class.Instance) ((Variable) symbol).getValue();    
         // Bind class variable to instance if not found
         if(instance.getScope().resolveLocally(var) == null) {
             instance.getScope().bind(var, new Variable());
@@ -322,10 +319,11 @@ public Object visit(Assignment node) {
         // Assign value to class variable
         Symbol selfSymbol = instance.getScope().resolveLocally(var);
         if(selfSymbol instanceof Variable) {
-            ((Variable) selfSymbol).setValue(node.getExpression().accept(this));
+            ((Variable) selfSymbol).setValue(
+                    node.getExpression().accept(this)
+            );
         }
-    } 
-    /* ... */
+    } /* ... */
 }
 ```
 
@@ -342,8 +340,10 @@ public Object visit(Identifier node) {
     if (symbol == null && node.getIdentifier().equals("self")) {
         // Bind class attribute if not found
         symbol = scope.resolve(node.getIdentifier());
-        Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
-        instance.getScope().bind(node.getNext().getIdentifier(), new Variable());
+        Class.Instance instance = 
+            (Class.Instance) ((Variable) symbol).getValue();
+        instance.getScope().bind(node.getNext().getIdentifier(), 
+            new Variable());
         return null;
     }
     /* ... */ 
