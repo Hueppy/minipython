@@ -230,6 +230,8 @@ a.getA()
 
 Classes must be instantiated by specifying for example ```a = A()```
 
+---
+
 The following steps are happening
 
  1. ```visit(Assignment node)``` gets called to assign a value to the variable ```a``` 
