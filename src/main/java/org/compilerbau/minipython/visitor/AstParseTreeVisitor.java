@@ -90,7 +90,7 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     @Override
     public Node visitTextExpression(MiniPythonParser.TextExpressionContext ctx) {
         Text text = new Text();
-        text.setValue(ctx.STRING().getText());
+        text.setValue(ctx.STRING().getText().replaceAll("^\"|^'|\"$|'$", ""));
         return text;
     }
 
@@ -99,6 +99,13 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         Truth truth = new Truth();
         truth.setValue(Boolean.parseBoolean(ctx.BOOLEAN().getText()));
         return truth;
+    }
+
+    @Override
+    public Node visitNegationExpression(MiniPythonParser.NegationExpressionContext ctx) {
+        Negation negation = new Negation();
+        negation.setExpression((Expression) ctx.expression().accept(this));
+        return negation;
     }
 
     @Override

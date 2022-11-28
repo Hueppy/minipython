@@ -8,7 +8,13 @@ import org.compilerbau.minipython.symbol.Function;
 import java.util.function.Supplier;
 
 public class SymbolVisitor extends AstVisitorBase<Object> {
-    Scope scope;
+    protected Scope scope;
+
+    public static class SymbolException extends RuntimeException {
+        public SymbolException(String message) {
+            super(message);
+        }
+    }
 
     private Symbol nest(Supplier<Symbol> action) {
         Scope parent = scope;
@@ -35,12 +41,16 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(org.compilerbau.minipython.ast.Class node) {
+        if(scope.resolve(node.getName()) != null) {
+            throw new SymbolException("Class " + node.getName() + " is already defined");
+        }
+
         scope.bind(node.getName(), nest(() -> {
             String baseName = node.getBase();
             if(baseName != null) {
                 Class parent = (Class) scope.resolve(baseName);
                 if(parent == null) {
-                    throw new RuntimeException("Class " + baseName + " doesn't exist");
+                    throw new SymbolException("Class " + baseName + " doesn't exist");
                 }
 
                 scope.setParent(parent.getScope());
@@ -70,14 +80,20 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(org.compilerbau.minipython.ast.Function node) {
+        if(scope.resolve(node.getName()) != null) {
+            throw new SymbolException("Function " + node.getName() + "() is already defined");
+        }
+
         scope.bind(node.getName(), nest(() -> {
             for (String parameter: node.getParameter()) {
-                scope.bind(parameter, new Variable());
+                scope.bind(parameter, new Parameter());
             }
 
             node.getBody().accept(this);
             node.setScope(scope);
-            return new Function(scope);
+            Function function = new Function(scope);
+            function.setFunction(node);
+            return function;
         }));
 
         return null;
@@ -93,7 +109,8 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Program node) {
         nest(() -> {
-            scope.bind("print", new BuiltIn());
+            scope.bind("print", BuiltInFunction.PRINT);
+            scope.bind("input", BuiltInFunction.INPUT);
 
             node.getBlock().accept(this);
 

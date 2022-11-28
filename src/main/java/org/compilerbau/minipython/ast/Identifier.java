@@ -46,4 +46,15 @@ public class Identifier extends Expression {
     public <T> T accept(AstVisitor<T> visitor) {
         return visitor.visit(this);
     }
+
+    public Identifier removeLast() {
+        if (this.next == null) {
+            return null;
+        }
+
+        Identifier identifier = new Identifier();
+        identifier.setIdentifier(this.identifier);
+        identifier.setNext(this.next.removeLast());
+        return identifier;
+    }
 }

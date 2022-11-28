@@ -1,0 +1,19 @@
+class A:
+  def set_a(self, a):
+    self.a = a
+  #end
+
+  def get_a(self, a):
+    return self.a
+  #end
+#end
+
+class B(A):
+  def print_a(self):
+    print(self.a)
+  #end
+#end
+
+b = B()
+b.set_a(3)
+b.print_a()

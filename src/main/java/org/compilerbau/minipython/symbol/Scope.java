@@ -4,6 +4,7 @@ import org.compilerbau.minipython.ast.Identifier;
 import java.util.*;
 
 public final class Scope {
+    public static final Scope EMPTY = new Scope();
     private Scope parent;
     private final Map<String, Symbol> symbols;
     public Scope() {
@@ -45,6 +46,14 @@ public final class Scope {
         }
 
         return result;
+    }
+
+    public Symbol resolveLocally(String name) {
+        if (symbols.containsKey(name)) {
+            return symbols.get(name);
+        }
+
+        return null;
     }
 
     public Scope getParent() {
