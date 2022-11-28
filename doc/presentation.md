@@ -7,8 +7,15 @@ section-titles: true
 slide-level: 2
 ---
 
-<<<<<<< HEAD
-# Features
+# Introduction
+
+## Language
+
+- python subset
+- identation is not required
+- blocks delimited by `#end`
+
+## Features
 Our programming language can do the following things
 
  - Basic arithmetic operation (+, -, /, *)
@@ -68,8 +75,6 @@ b.set_a(3)
 b.print_a()
 ```
 
-# Introduction
-
 ## Compiling
 ![xkcd 303](https://imgs.xkcd.com/comics/compiling.png){height=75%}
 
@@ -79,15 +84,15 @@ b.print_a()
 # Lexical analysis
 Converting a sequence of characters from the source code into a sequence of tokens.
 
-```
-...
+```antlrv4
+/* ... */
 DEF                : 'def';
 CLASS              : 'class';
 SELF               : 'self';
 IDENTIFIER         : [a-zA-Z_] [a-zA-Z0-9_]* ;
 END                : '#end' ('\n' | '\r\n')?;
 WHITESPACE         : [ \t\r\n]+ -> skip ;
-...
+/* ... */
 ```
 ANTLR generatse a scanner from the given grammar for us so we can use the tokens in our syntactic analyses.
 
@@ -96,7 +101,7 @@ Arrange the tokens into a Parse Tree that represents the syntactic structure.
 
 ## Functions
 This syntactic structure describes a definition of a function,
-```
+```antlrv4
 function: DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON 
           statements END ;
 ```
@@ -109,7 +114,7 @@ def functionA():
 
 ## Classes
 We also want to define a class structure
-```
+```antlrv4
 class_function: DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? 
                 RBRACKET COLON statements END;
 class         : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) 
