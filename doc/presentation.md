@@ -5,7 +5,7 @@
 ![Overview](https://github.com/Hueppy/minipython/blob/presentation/doc/overview.svg)
 
 # Lexical analysis
-converting a sequence of characters from the source code into a sequence of tokens.
+converts a sequence of characters from the source code into a sequence of tokens.
 ```
 ...
 DEF                : 'def';
@@ -16,17 +16,17 @@ END                : '#end' ('\n' | '\r\n')?;
 WHITESPACE         : [ \t\r\n]+ -> skip ;
 ...
 ```
-ANTLR generate a scanner from the given grammar for us, so we can use the tokens in our syntactic analyses.
+ANTLR generates a scanner for us from the given grammar, so we can use the tokens in our syntactic analyses.
 
 # Syntactic analysis
-arrange the tokens into a Parse-Tree that represents the syntactic structure.
+arranges the tokens into a Parse-Tree that represents the syntactic structure.
 
-## Funktions
+## Functions
 This syntactic structure describes a definition of a function,
 ```
 function           : DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON statements END ;
 ```
-so we are able to encapsulate instructions with the following code
+so we are able to encapsulate instructions with the following code.
 ```python
 def functionA():
 print("I am function A")
@@ -39,7 +39,7 @@ We also want to define a class structure
 class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RBRACKET COLON statements END;
 class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
 ```
-and use it in our sorce code
+and use it in our source code.
 ```python
 class B(A):
 def methodB(self):
@@ -48,7 +48,7 @@ def methodB(self):
 #end
 ```
 # Abstract syntax tree
-## Funktion node
+## Function node
 ```mermaid
 graph TD;
   Function-->Identifier;
@@ -67,13 +67,13 @@ graph TD;
 ```
 
 # Symbol table
-hold informations about the source code
+holds information about the source code
 * variables
 * function names
 * class names
 
 # Interpreter
-we can use the ast structure to visit the nodes. With the additional information in the symbol table we can resolve the elements and execute the code
+We can use the AST structure to visit the nodes. With the additional information in the symbol table we can resolve the elements and execute the code.
 
 # Test Cases
 ## Parameter handling
