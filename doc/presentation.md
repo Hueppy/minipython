@@ -5,7 +5,7 @@
 ![Overview](https://github.com/Hueppy/minipython/blob/presentation/doc/overview.svg)
 
 # Lexical analysis
-converting a sequenc of characters from the sorce code into a sequence of tokens.
+converting a sequence of characters from the source code into a sequence of tokens.
 ```
 ...
 DEF                : 'def';
@@ -16,13 +16,13 @@ END                : '#end' ('\n' | '\r\n')?;
 WHITESPACE         : [ \t\r\n]+ -> skip ;
 ...
 ```
-ANTLR generate a scanner from the given grammar for us, so we can use the tokens in our syntatic analyse.
+ANTLR generate a scanner from the given grammar for us, so we can use the tokens in our syntactic analyses.
 
 # Syntactic analysis
 arrange the tokens into a Parse-Tree that represents the syntactic structure.
 
 ## Funktions
-This syntactic structure describes a definition of a funktion,
+This syntactic structure describes a definition of a function,
 ```
 function           : DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON statements END ;
 ```
@@ -34,7 +34,7 @@ print("I am function A")
 ```
 
 ## Classes
-We also want to define a class stukture
+We also want to define a class structure
 ```
 class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RBRACKET COLON statements END;
 class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
@@ -73,7 +73,7 @@ hold informations about the source code
 * class names
 
 # Interpreter
-we can use the AST structure and the informations in the symbol table to execute the code
+we can use the AST structure and the informationin the symbol table to execute the code
 
 # Test Cases
 ## Parameter handling
@@ -88,3 +88,4 @@ setParam(a)
 ```
 
 # Perspective
+The interpreter should give detailed information about the error in the source code so the developer able to find them easier 
