@@ -94,7 +94,7 @@ END                : '#end' ('\n' | '\r\n')?;
 WHITESPACE         : [ \t\r\n]+ -> skip ;
 /* ... */
 ```
-ANTLR generatse a scanner from the given grammar for us so we can use the tokens in our syntactic analyses.
+ANTLR generates a scanner from the given grammar for us so we can use the tokens in our syntactic analyses.
 
 ## Syntactic analysis
 Arrange the tokens into a Parse Tree that represents the syntactic structure.
