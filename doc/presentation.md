@@ -75,13 +75,13 @@ b.set_a(3)
 b.print_a()
 ```
 
-## Compiling
+# Compiling
 ![xkcd 303](https://imgs.xkcd.com/comics/compiling.png){height=75%}
 
 ## Overview
 ![Overview](overview.svg){height=75%}
 
-# Lexical analysis
+## Lexical analysis
 Converting a sequence of characters from the source code into a sequence of tokens.
 
 ```antlrv4
@@ -131,6 +131,7 @@ class B(A):
 
 # Abstract syntax tree
 The AST is generated from the parse tree
+
 ## Function node
 ```{.mermaid width=300}
 graph TD;
@@ -158,17 +159,18 @@ for example, if functions or classes are defined more than once the compiler wil
 
 # Symbol table
 The symbol table is separated into scopes each scope holds information about
-* List of symbols
-    * Variables
-    * Functions
-    * Classes
-    * BuiltIn Function (print, input) 
-* Parent scope (none if global scope)
+
+ - List of symbols
+   - Variables
+   - Functions
+   - Classes
+   - BuiltIn Function (print, input) 
+ - Parent scope (none if global scope)
 
 Both the symbol visitor and interpreter have access to this symbol table
 
 ## Example
-```mermaid
+```{.mermaid width=500}
 classDiagram
     BuiltInScope <|-- GlobalScope
     GlobalScope <|-- Function
@@ -207,24 +209,24 @@ classDiagram
 
 # Interpreter
 We can use the AST structure and the information in the symbol table to execute the code
+
 ## Instantiating classes
 Classes must be instantiated by specifying for example ```a = A()```
 
 The following steps are happening
-1. ```visit(Assignment node)``` gets called to assign a value to the variable ```a``` 
-2. Because ```A()``` has to be instantiated it calls ```visit(Call node)```
-3. The function checks if the symbol is a instance of Class (symbol) and calls the
-```((Class) symbol).instantiate()``` method of that symbol
-4. ```instantiate()``` creates a new scope with a parent in the symbol table and returns it
-5. The newly created instance (scope) is then assigned to variable ```a```
+
+ 1. ```visit(Assignment node)``` gets called to assign a value to the variable ```a``` 
+ 2. Because ```A()``` has to be instantiated it calls ```visit(Call node)```
+ 3. The function checks if the symbol is a instance of Class (symbol) and calls the ```((Class) symbol).instantiate()``` method of that symbol
+ 4. ```instantiate()``` creates a new scope with a parent in the symbol table and returns it
+ 5. The newly created instance (scope) is then assigned to variable ```a```
+
+---
 
 ```java
 public class InterpretingVisitor extends AstVisitorBase<Object> {
-    /* ... */
     @Override
     public Object visit(Assignment node) {
-        super.visit(node);
-
         Symbol symbol;
         if(node.getIdentifier().getIdentifier().equals("self")) {
             // Handle self assignments
@@ -238,7 +240,11 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
 
         return null;
     }
-    
+```
+
+---
+
+```java
     @Override
     public Object visit(Call node) {
         /* ... */
@@ -255,7 +261,11 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
     }
     /* ... */
 }
+```
 
+---
+
+```java
 public class Class extends Symbol implements Scoped {
     /* ... */
     public Instance instantiate() {
@@ -270,16 +280,6 @@ public class Class extends Symbol implements Scoped {
 You may have noticed that during instantiating no symbols are bound to that newly created instance
 
 The actual binding happens when a class function is called
-1. By calling ```a.setA(10)``` it eventually lands in the ```visit(Assignment node)``` method because we try to assign a value ```self.a = a```
-2. Because the assignment starts with ```self``` it will first get the scope symbol of our newly created instance ```scope.resolve(node.getIdentifier().getIdentifier())```
-3. The scope symbol is cast to a class instance ```Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue()```
-4. By doing ```node.getIdentifier().getNext()``` we get variable ```a``` after the ```self.``` and now we can try to resolve it **locally** (```if(instance.getScope().resolveLocally(var) == null)```)
-5. If the variable is not resolved we will simply bind it to this instance ```instance.getScope().bind(var, new Variable())```
-6. The last step would be to just assign the value to that variable ```((Variable) selfSymbol).setValue(node.getExpression().accept(this))```
-
-Now, what if we called ```a.getA()``` before ```a.setA(10)``` the program would simply crash because ```self.a``` is not bound
-
-To avoid that we will simply bind it in the ``` visit(Identifier node)``` method to the instance and ```return null```
 
 ```python
 class A():
@@ -292,58 +292,55 @@ class A():
 #end
 ```
 
+---
+
+ 1. By calling ```a.setA(10)``` it eventually lands in the ```visit(Assignment node)``` method because we try to assign a value ```self.a = a```
+ 2. Because the assignment starts with ```self``` it will first get the scope symbol of our newly created instance ```scope.resolve(node.getIdentifier().getIdentifier())```
+ 3. The scope symbol is cast to a class instance ```Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue()```
+ 4. By doing ```node.getIdentifier().getNext()``` we get variable ```a``` after the ```self.``` and now we can try to resolve it **locally** (```if(instance.getScope().resolveLocally(var) == null)```)
+ 5. If the variable is not resolved we will simply bind it to this instance ```instance.getScope().bind(var, new Variable())```
+ 6. The last step would be to just assign the value to that variable ```((Variable) selfSymbol).setValue(node.getExpression().accept(this))```
+
+---
+
 ```java
-public class InterpretingVisitor extends AstVisitorBase<Object> {
-    /* ... */
-    @Override
-    public Object visit(Assignment node) {
-        /* ... */
-        Symbol symbol;
-        if(node.getIdentifier().getIdentifier().equals("self")) {
-            if(node.getIdentifier().getNext() == null) {
-                throw new InterpreterException("Can't assign values directly to self");
-            }
-            // Resolve instance symbol
-            symbol = scope.resolve(node.getIdentifier().getIdentifier());
-            // Get variable name
-            String var = node.getIdentifier().getNext().getIdentifier();
-            // Get instance and cast it
-            Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
-            // Bind class variable to instance if not found
-            if(instance.getScope().resolveLocally(var) == null) {
-                instance.getScope().bind(var, new Variable());
-            }
-            // Assign value to class variable
-            Symbol selfSymbol = instance.getScope().resolveLocally(var);
-            if(selfSymbol instanceof Variable) {
-                ((Variable) selfSymbol).setValue(node.getExpression().accept(this));
-            }
-        } else {
-            // Handle normal assignment
-            /* ... */
+public Object visit(Assignment node) {
+    if(node.getIdentifier().getIdentifier().equals("self")) {
+        Symbol symbol = scope.resolve(node.getIdentifier().getIdentifier()); 
+        String var = node.getIdentifier().getNext().getIdentifier();
+        Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();    
+        // Bind class variable to instance if not found
+        if(instance.getScope().resolveLocally(var) == null) {
+            instance.getScope().bind(var, new Variable());
+        }        
+        // Assign value to class variable
+        Symbol selfSymbol = instance.getScope().resolveLocally(var);
+        if(selfSymbol instanceof Variable) {
+            ((Variable) selfSymbol).setValue(node.getExpression().accept(this));
         }
-    }
-    
-    @Override
-    public Object visit(Identifier node) {
-        Symbol symbol = scope.resolve(node);
-
-        if (symbol instanceof Variable) {
-            return ((Variable) symbol).getValue();
-        } else if (symbol == null && node.getIdentifier().equals("self")) {
-            // Bind class attribute if not found
-            symbol = scope.resolve(node.getIdentifier());
-            Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
-            instance.getScope().bind(node.getNext().getIdentifier(), new Variable());
-
-            return null;
-        } else if (symbol == null) {
-            throw new InterpreterException(node.getIdentifier() + " doesn't exist");
-        } else {
-            throw new InterpreterException(node.getIdentifier() + " is not a variable");
-        }
-    }
+    } 
     /* ... */
+}
+```
+
+---
+
+Now, what if we called ```a.getA()``` before ```a.setA(10)``` the program would simply crash because ```self.a``` is not bound
+
+To avoid that we will simply bind it in the ``` visit(Identifier node)``` method to the instance and ```return null```
+
+```java
+public Object visit(Identifier node) {
+    Symbol symbol = scope.resolve(node);
+    /* ... */
+    if (symbol == null && node.getIdentifier().equals("self")) {
+        // Bind class attribute if not found
+        symbol = scope.resolve(node.getIdentifier());
+        Class.Instance instance = (Class.Instance) ((Variable) symbol).getValue();
+        instance.getScope().bind(node.getNext().getIdentifier(), new Variable());
+        return null;
+    }
+    /* ... */ 
 }
 ```
 
@@ -351,12 +348,15 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
 ## Parameter handling
 ```python
 def setParam(b):
-b = 4
+  b = 4
 #end
-...
+
+# ...
+
 a = 3
 setParam(a)
-...
+
+# ...
 ```
 
 # Perspective
