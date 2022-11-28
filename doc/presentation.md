@@ -1,6 +1,63 @@
 # Compiling
 ![Compiling by xkcd](https://imgs.xkcd.com/comics/compiling.png)
 
+# Features
+Our programming language can do the following things
+* Basic arithmetic operation (+, -, /, *)
+* Comparison operation (==, !=, >=, <=, >, <)
+* Logical operation (And, Or, Not)
+* Loops (While)
+* Conditionals (if, elif, else)
+* Functions
+* Recursion
+* **Classes with single inheritance**
+
+# Syntax examples
+## Loops
+```python
+a = 10
+while (a >= 0):
+    print(a)
+    a = a - 1
+#end
+```
+
+## Function with recursion
+```python
+def f(a):
+  print(a)
+  if a > 0:
+    f(a - 1)
+  #end
+  print(a)
+#end
+
+f(10)
+```
+
+## Classes with inheritance
+```python 
+class A:
+  def set_a(self, a):
+    self.a = a
+  #end
+
+  def get_a(self, a):
+    return self.a
+  #end
+#end
+
+class B(A):
+  def print_a(self):
+    print(self.a)
+  #end
+#end
+
+b = B()
+b.set_a(3)
+b.print_a()
+```
+
 # Overview
 ![Overview](https://github.com/Hueppy/minipython/blob/presentation/doc/overview.svg)
 
