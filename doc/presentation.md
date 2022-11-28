@@ -1,18 +1,26 @@
-# Compiling
-![Compiling by xkcd](https://imgs.xkcd.com/comics/compiling.png)
+---
+title: "Implementing object-orientation in interpreters"
+author: "Michael Feller, Patrick Hüntelmann, Waldemar Schäfer"
+theme: "Madrid"
+aspectratio: 169
+section-titles: true
+slide-level: 2
+---
 
+<<<<<<< HEAD
 # Features
 Our programming language can do the following things
-* Basic arithmetic operation (+, -, /, *)
-* Comparison operation (==, !=, >=, <=, >, <)
-* Logical operation (And, Or, Not)
-* Loops (While)
-* Conditionals (if, elif, else)
-* BuiltIn Functions (Input, Print)
-* Variables (Dynamic/No types)
-* Functions
-* Recursion
-* **Classes with single inheritance**
+
+ - Basic arithmetic operation (+, -, /, *)
+ - Comparison operation (==, !=, >=, <=, >, <)
+ - Logical operation (And, Or, Not)
+ - Loops (While)
+ - Conditionals (if, elif, else)
+ - BuiltIn Functions (Input, Print)
+ - Variables (Dynamic/No types)
+ - Functions
+ - Recursion
+ - **Classes with single inheritance**
 
 # Syntax examples
 ## Loops
@@ -60,11 +68,17 @@ b.set_a(3)
 b.print_a()
 ```
 
-# Overview
-![Overview](https://github.com/Hueppy/minipython/blob/presentation/doc/overview.svg)
+# Introduction
+
+## Compiling
+![xkcd 303](https://imgs.xkcd.com/comics/compiling.png){height=75%}
+
+## Overview
+![Overview](overview.svg){height=75%}
 
 # Lexical analysis
 Converting a sequence of characters from the source code into a sequence of tokens.
+
 ```
 ...
 DEF                : 'def';
@@ -77,39 +91,43 @@ WHITESPACE         : [ \t\r\n]+ -> skip ;
 ```
 ANTLR generatse a scanner from the given grammar for us so we can use the tokens in our syntactic analyses.
 
-# Syntactic analysis
+## Syntactic analysis
 Arrange the tokens into a Parse Tree that represents the syntactic structure.
 
 ## Functions
 This syntactic structure describes a definition of a function,
 ```
-function           : DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON statements END ;
+function: DEF IDENTIFIER LBRACKET function_parameter RBRACKET COLON 
+          statements END ;
 ```
 so we are able to encapsulate instructions with the following code
 ```python
 def functionA():
-print("I am function A")
+  print("I am function A")
 #end
 ```
 
 ## Classes
 We also want to define a class structure
 ```
-class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RBRACKET COLON statements END;
-class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
+class_function: DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? 
+                RBRACKET COLON statements END;
+class         : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) 
+                class_function* END;
 ```
 and use it in our source code
 ```python
 class B(A):
-def methodB(self):
-    print("I am methodB from class B")
-#end
+  def methodB(self):
+      print("I am methodB from class B")
+  #end
 #end
 ```
+
 # Abstract syntax tree
 The AST is generated from the parse tree
 ## Function node
-```mermaid
+```{.mermaid width=300}
 graph TD;
   Function-->Identifier;
   Function-->Parameter;
@@ -119,7 +137,7 @@ graph TD;
 ```
 
 ## Class node
-```mermaid
+```{.mermaid width=300}
 graph TD;
   Class-->Identifier;
   Class-->Parent;
@@ -197,7 +215,7 @@ The following steps are happening
 
 ```java
 public class InterpretingVisitor extends AstVisitorBase<Object> {
-    ...
+    /* ... */
     @Override
     public Object visit(Assignment node) {
         super.visit(node);
@@ -218,7 +236,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
     
     @Override
     public Object visit(Call node) {
-        ...
+        /* ... */
         Symbol symbol = scope.resolve(node.getIdentifier());
         if (symbol instanceof org.compilerbau.minipython.symbol.Function) {
             // Handle function symbol
@@ -230,11 +248,11 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             throw new InterpreterException("Call error on " + node.getIdentifier());
         }
     }
-    ...
+    /* ... */
 }
 
 public class Class extends Symbol implements Scoped {
-    ...
+    /* ... */
     public Instance instantiate() {
         Scope scope = new Scope();
         scope.setParent(this.scope);
@@ -271,10 +289,10 @@ class A():
 
 ```java
 public class InterpretingVisitor extends AstVisitorBase<Object> {
-    ...
+    /* ... */
     @Override
     public Object visit(Assignment node) {
-        ...
+        /* ... */
         Symbol symbol;
         if(node.getIdentifier().getIdentifier().equals("self")) {
             if(node.getIdentifier().getNext() == null) {
@@ -296,7 +314,9 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
                 ((Variable) selfSymbol).setValue(node.getExpression().accept(this));
             }
         } else {
-        // Handle normal assignment
+            // Handle normal assignment
+            /* ... */
+        }
     }
     
     @Override
@@ -318,7 +338,7 @@ public class InterpretingVisitor extends AstVisitorBase<Object> {
             throw new InterpreterException(node.getIdentifier() + " is not a variable");
         }
     }
-    ...
+    /* ... */
 }
 ```
 
