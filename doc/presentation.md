@@ -349,5 +349,21 @@ public Object visit(Identifier node) {
 }
 ```
 
-# Perspective
-The interpreter should give detailed information about the errors in the source code so the developer able to find them easier 
+# Error handling
+The interpreter should give information about the errors in the source code so the developer is able to find them easier 
+
+Examples
+
+Function already defined
+```Exception in thread "main" org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: Function setC() is already defined```
+
+Variable doesn't exist
+```Exception in thread "main" org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: z doesn't exist```
+
+Class already defined
+```Exception in thread "main" org.compilerbau.minipython.visitor.SymbolVisitor$SymbolException: Class D is already defined```
+
+Calculation error ```a = "string" - 1```
+
+
+```Exception in thread "main" org.compilerbau.minipython.visitor.InterpretingVisitor$InterpreterException: Calculation error```
