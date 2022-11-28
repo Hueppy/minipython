@@ -211,6 +211,22 @@ classDiagram
 We can use the AST structure and the information in the symbol table to execute the code
 
 ## Instantiating classes
+Example
+```python
+class A():
+    def setA(self, a):
+        self.a = a
+    #end
+    def getA(self):
+        return self.a
+    #end
+#end
+
+a = A()
+a.setA(10)
+a.getA()
+```
+
 Classes must be instantiated by specifying for example ```a = A()```
 
 The following steps are happening
@@ -281,17 +297,6 @@ You may have noticed that during instantiating no symbols are bound to that newl
 
 The actual binding happens when a class function is called
 
-```python
-class A():
-    def setA(self, a):
-        self.a = a
-    #end
-    def getA(self):
-        return self.a
-    #end
-#end
-```
-
 ---
 
  1. By calling ```a.setA(10)``` it eventually lands in the ```visit(Assignment node)``` method because we try to assign a value ```self.a = a```
@@ -327,7 +332,7 @@ public Object visit(Assignment node) {
 
 Now, what if we called ```a.getA()``` before ```a.setA(10)``` the program would simply crash because ```self.a``` is not bound
 
-To avoid that we will simply bind it in the ``` visit(Identifier node)``` method to the instance and ```return null```
+To avoid that we will simply bind it in the ``` visit(Identifier node)``` method to the instance and ```return null``` if it can't be resolved
 
 ```java
 public Object visit(Identifier node) {
