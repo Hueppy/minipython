@@ -8,6 +8,8 @@ Our programming language can do the following things
 * Logical operation (And, Or, Not)
 * Loops (While)
 * Conditionals (if, elif, else)
+* BuiltIn Functions (Input, Print)
+* Variables (Dynamic/No types)
 * Functions
 * Recursion
 * **Classes with single inheritance**
