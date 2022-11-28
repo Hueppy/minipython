@@ -66,7 +66,7 @@ graph TD;
   Class-->Functions;
 ```
 
-# Symboltable
+# Symbol table
 hold informations about the source code
 * variables
 * function names
@@ -88,4 +88,4 @@ setParam(a)
 ```
 
 # Perspective
-The interpreter should give detailed information about the error in the source code so the developer able to find them easier 
+The interpreter should give detailed information about the errors in the source code so the developer able to find them easier 
