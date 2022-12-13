@@ -23,6 +23,13 @@
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
         </dependency>
+        <dependency>
+            <groupId>io.github.mini-python</groupId>
+            <artifactId>cbuilder</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/Mini-Python-Builder/build/libs/Mini-Python-Builder-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
 
 
