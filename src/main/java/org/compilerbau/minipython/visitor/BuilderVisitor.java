@@ -1,6 +1,5 @@
 package org.compilerbau.minipython.visitor;
 
-import CBuilder.Statement;
 import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
@@ -179,7 +178,7 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
 
         @Override
-        public Statement visit(Class node) {
+        public CBuilder.Statement visit(Class node) {
             BuilderVisitor.this.visit(node);
             return super.visit(node);
         }
@@ -188,6 +187,7 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
     private final Path output;
     private List<CBuilder.variables.VariableDeclaration> variables = new ArrayList<>();
     private List<CBuilder.objects.functions.Function> functions = new ArrayList<>();
+    private List<CBuilder.objects.MPyClass> classes = new ArrayList<>();
 
     public BuilderVisitor(Path output) {
         this.output = output;
@@ -212,6 +212,37 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
     }
 
     @Override
+    public Object visit(Class node) {
+        String base = node.getBase();
+
+        List<CBuilder.objects.functions.Function> enclosing = functions;
+        functions = new ArrayList<>();
+
+        if (node.getFunctions().stream().noneMatch(f -> f.getName().equals("__init__"))) {
+            functions.add(new CBuilder.objects.functions.Function(
+                    "__init__",
+                    List.of(new CBuilder.objects.SuperCall(List.of())),
+                    List.of(new CBuilder.objects.functions.Argument("self", 0)),
+                    List.of()
+            ));
+        }
+
+        for (Function function: node.getFunctions()) {
+            function.accept(this);
+        }
+
+        classes.add(new CBuilder.objects.MPyClass(
+                node.getName(),
+                base != null ? new CBuilder.Reference(base) : new CBuilder.Reference("__MPyType_Object"),
+                functions,
+                Map.of()));
+
+        functions = enclosing;
+
+        return super.visit(node);
+    }
+
+    @Override
     public Object visit(Program node) {
         CBuilder.Statement statement = node.getBlock().accept(statementVisitor);
         CBuilder.ProgramBuilder programBuilder = new CBuilder.ProgramBuilder();
@@ -220,6 +251,9 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
         for (CBuilder.objects.functions.Function function: functions) {
             programBuilder.addFunction(function);
+        }
+        for (CBuilder.objects.MPyClass _class: classes) {
+            programBuilder.addClass(_class);
         }
         programBuilder.addStatement(statement);
         programBuilder.writeProgram(output);
