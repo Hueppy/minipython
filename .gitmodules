@@ -1,0 +1,4 @@
+[submodule "Mini-Python-Builder"]
+	path = Mini-Python-Builder
+	url = git@github.com:Compiler-CampusMinden/Mini-Python-Builder.git
+	branch = master

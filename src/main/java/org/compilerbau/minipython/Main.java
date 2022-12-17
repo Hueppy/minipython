@@ -6,8 +6,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.compilerbau.minipython.ast.Program;
 import org.compilerbau.minipython.visitor.AstParseTreeVisitor;
+import org.compilerbau.minipython.visitor.BuilderVisitor;
 import org.compilerbau.minipython.visitor.InterpretingVisitor;
 import org.compilerbau.minipython.visitor.SymbolVisitor;
+
+import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -22,7 +25,12 @@ public class Main {
 
         program.accept(new SymbolVisitor());
 
+        /*
         InterpretingVisitor interpreter = new InterpretingVisitor();
         program.accept(interpreter);
+        */
+
+        program.accept(new BuilderVisitor(Path.of("out")));
+
     }
 }
