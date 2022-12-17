@@ -12,11 +12,14 @@ call_parameter     : expression (COMMA expression)*
                    ;
 call               : identifier LBRACKET call_parameter RBRACKET ;
 
+list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET ;
+
 expression         : call                                 # CallExpression
                    | identifier                           # VariableExpression
                    | INT                                  # NumberExpression
                    | STRING                               # TextExpression
                    | BOOLEAN                              # TruthExpression
+                   | list                                 # ListExpression
                    | LBRACKET expression RBRACKET         # SubexpressionExpression
                    | expression MULTIPLY expression       # MultiplicationExpression
                    | expression DIVIDE expression         # DivisionExpression
@@ -84,6 +87,9 @@ ASSIGN             : '=';
 COLON              : ':';
 DOT                : '.';
 COMMA              : ',';
+
+LSQUAREBRACKET     : '[';
+RSQUAREBRACKET     : ']';
 
 MULTIPLY           : '*';
 DIVIDE             : '/';
