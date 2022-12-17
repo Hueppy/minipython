@@ -34,8 +34,8 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         public CBuilder.Expression visit(Identifier node) {
             CBuilder.Expression reference = new CBuilder.Reference(node.getIdentifier());
             while (node.hasNext()) {
-                reference = new CBuilder.objects.AttributeReference(node.getIdentifier(), reference);
                 node = node.getNext();
+                reference = new CBuilder.objects.AttributeReference(node.getIdentifier(), reference);
             }
 
             return reference;
