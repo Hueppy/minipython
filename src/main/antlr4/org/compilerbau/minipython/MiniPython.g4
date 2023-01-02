@@ -38,7 +38,7 @@ assignment         : identifier ASSIGN expression ;
 return             : RETURN expression ;
 
 condition          : expression COLON
-                   | LBRACKET expression RBRACKET COLON 
+                   | LBRACKET expression RBRACKET COLON
                    ;
 
 loop               : WHILE condition statements END ;
@@ -59,6 +59,12 @@ class_function     : DEF IDENTIFIER LBRACKET SELF (COMMA function_parameter)? RB
 
 class              : CLASS IDENTIFIER (COLON | LBRACKET IDENTIFIER RBRACKET COLON) class_function* END;
 
+imports            : MULTIPLY
+                   | IDENTIFIER (COMMA IDENTIFIER)*
+                   ;
+
+import_statement   : IMPORT imports FROM STRING;
+
 statement          : expression
                    | assignment
                    | loop
@@ -66,9 +72,10 @@ statement          : expression
                    | function
                    | return
                    | class
+                   | import_statement
                    | PASS
                    ;
-                   
+
 statements         : statement+? ;
 
 LBRACKET           : '(';
@@ -89,7 +96,7 @@ GREATER_EQUALS     : '>=';
 LESS_EQUALS        : '<=';
 GREATER_THAN       : '>';
 LESS_THAN          : '<';
-                   
+
 PASS               : 'pass';
 SELF               : 'self';
 RETURN             : 'return';
@@ -99,6 +106,8 @@ ELIF               : 'elif';
 ELSE               : 'else';
 CLASS              : 'class';
 DEF                : 'def';
+IMPORT             : 'import';
+FROM               : 'from';
 
 NOT                : 'not' ;
 AND                : 'and' ;

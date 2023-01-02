@@ -1,12 +1,18 @@
 package org.compilerbau.minipython.visitor;
 
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.compilerbau.minipython.MiniPythonBaseVisitor;
+import org.compilerbau.minipython.MiniPythonLexer;
 import org.compilerbau.minipython.MiniPythonParser;
 import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Number;
 
+import java.io.IOException;
 import java.util.List;
 
 public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
@@ -14,6 +20,32 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         for (MiniPythonParser.ExpressionContext expression: source) {
             target.add((Expression) expression.accept(this));
         }
+    }
+    @Override
+    public Node visitImport_statement(MiniPythonParser.Import_statementContext ctx) {
+        Import imp = new Import();
+        // Remove first and last character
+        imp.setPath(ctx.STRING().getText().substring(1, ctx.STRING().getText().length() - 1));
+        CharStream charStream = null;
+
+        try {
+            charStream = CharStreams.fromFileName(imp.getPath());
+        } catch (IOException e) {
+            throw new RuntimeException("Error at importing " + imp.getPath());
+        }
+
+        MiniPythonLexer lexer = new MiniPythonLexer(charStream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        MiniPythonParser parser = new MiniPythonParser(tokens);
+
+        ParseTree tree = parser.start();
+        imp.setProgram((Program) tree.accept(this));
+
+        for (TerminalNode identifier : ctx.imports().IDENTIFIER()) {
+            imp.getImports().add(identifier.getText());
+        }
+
+        return imp;
     }
 
     @Override

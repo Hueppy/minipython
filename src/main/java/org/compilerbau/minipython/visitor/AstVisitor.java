@@ -20,6 +20,6 @@ public interface AstVisitor<T> {
     T visit(Truth node);
     T visit(Identifier node);
     T visit(Return node);
-
+    T visit(Import node);
     T visit(Block node);
 }
