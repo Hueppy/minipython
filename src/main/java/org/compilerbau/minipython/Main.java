@@ -11,6 +11,7 @@ import org.compilerbau.minipython.visitor.BuilderVisitor;
 import org.compilerbau.minipython.visitor.InterpretingVisitor;
 import org.compilerbau.minipython.visitor.SymbolVisitor;
 
+import java.nio.file.Path;
 import java.util.Collections;
 
 public class Main {
@@ -24,17 +25,19 @@ public class Main {
         AstParseTreeVisitor visitor = new AstParseTreeVisitor();
         Program program = (Program) tree.accept(visitor);
 
+        /*
         TreeViewer viewer = new TreeViewer(Collections.emptyList(), program);
         viewer.open();
+         */
 
-        //program.accept(new SymbolVisitor());
+        program.accept(new SymbolVisitor());
 
         /*
         InterpretingVisitor interpreter = new InterpretingVisitor();
         program.accept(interpreter);
         */
 
-        //program.accept(new BuilderVisitor(Path.of("out")));
+        program.accept(new BuilderVisitor(Path.of("out")));
 
     }
 }

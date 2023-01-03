@@ -1,12 +1,16 @@
-import * from "res/function.mpy"
+import f from "res/function.mpy"
 
 class A:
   def set_a(self, a):
     self.a = a
   #end
 
-  def get_a(self, a):
+  def get_a(self):
     return self.a
+  #end
+
+  def calc_a(self):
+    return f(self.a)
   #end
 #end
 

@@ -1,85 +1,20 @@
-import A, B from "res/class.mpy"
+#import B from "res/class.mpy"
+#import A, B from "res/class.mpy"
+import f from "res/function.mpy"
 
-a = 5
-a = 2 + 3
+
+a = f(7)
 print(a)
 
-a = 10 - 5
-a = "foo"
-# func1(a, b)
+#b = B()
+#b.set_a(3)
+#b.print_a()
 
-def func1(a, b):
-    c = a + b
-    return c == a + b
-#end
+#c = B()
+#c.set_a(5)
+#b.print_a()
+#c.print_a()
 
-# func1(var1, 5)
-# func1(func2(), 1 + 1)
-
-1 == 1
-7 >= 1 + 2
-
-a = 10
-while (a >= 0):
-    print(a)
-    a = a- 1
-#end
-
-a = "abc"
-
-if (a < "abc : ( )"):
-    print(a)
-#end
-
-if a < "adc":
-    print("a kleiner als ", "adc")
-elif a == "adf":
-    print("a ist ", "adf")
-else:
-    print("a passt nicht")
-#end
-
-a = "abc"
-if a < "adc":
-    print("a kleiner als ", "adc")
-else:
-    print("a passt nicht")
-#end
-
-a = "abc"
-if a < "adc":
-    print("a kleiner als ", "adc")
-elif a == "adf":
-    print("a ist ", "adf")
-#end
-
-a = "abc"
-if a < "adc":
-    print("a kleiner als ", "adc")
-#end
-
-class A:
-    def method_1(self):
-        #print(self.a)
-        print(self)
-
-        return self
-    #end
-#end
-
-class B(A):
-    def setA(self, a):
-        self.a = a
-    #end
-
-    def getA(self):
-        return self.a
-    #end
-
-    def getB(self):
-        return self.b
-    #end
-#end
-
-a = B()
-#a.setA(5)
+#d = A()
+#d.set_a(7)
+#print(d.calc_a())

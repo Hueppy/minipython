@@ -15,6 +15,8 @@ public class Class extends Symbol implements Scoped {
         }
     }
 
+    private org.compilerbau.minipython.ast.Class clazz;
+
     private final Scope scope;
 
     public Class(Scope scope) {
@@ -23,6 +25,14 @@ public class Class extends Symbol implements Scoped {
 
     public Scope getScope() {
         return scope;
+    }
+
+    public org.compilerbau.minipython.ast.Class getClazz() {
+        return clazz;
+    }
+
+    public void setClass(org.compilerbau.minipython.ast.Class clazz) {
+        this.clazz = clazz;
     }
 
     public Instance instantiate() {

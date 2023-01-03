@@ -78,7 +78,9 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
 
             return node.getOperands().stream()
                     .map(x -> x.accept(this))
-                    .reduce((x, y) -> new CBuilder.objects.Call(new CBuilder.objects.AttributeReference(func.get(), x), Collections.singletonList(y)))
+                    .reduce((x, y) -> new CBuilder.objects.Call(
+                        new CBuilder.objects.AttributeReference(func.get(), x),
+                        Collections.singletonList(y)))
                     .get();
         }
 
@@ -182,6 +184,12 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
             BuilderVisitor.this.visit(node);
             return super.visit(node);
         }
+
+        @Override
+        public CBuilder.Statement visit(Import node) {
+            BuilderVisitor.this.visit(node);
+            return super.visit(node);
+        }
     };
 
     private final Path output;
@@ -242,6 +250,11 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         return super.visit(node);
     }
 
+    @Override
+    public Object visit(Import node) {
+        node.getProgram().accept(this);
+        return super.visit(node);
+    }
     @Override
     public Object visit(Program node) {
         CBuilder.Statement statement = node.getBlock().accept(statementVisitor);

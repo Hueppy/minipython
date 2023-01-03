@@ -1,10 +1,12 @@
 package org.compilerbau.minipython.visitor;
 
 import org.compilerbau.minipython.ast.*;
+import org.compilerbau.minipython.ast.Import;
 import org.compilerbau.minipython.symbol.*;
 import org.compilerbau.minipython.symbol.Class;
 import org.compilerbau.minipython.symbol.Function;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class SymbolVisitor extends AstVisitorBase<Object> {
@@ -30,10 +32,59 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     }
 
     @Override
+    public Object visit(Call node) {
+        Identifier identifier = node.getIdentifier();
+        identifier.accept(this);
+
+        while (identifier.hasNext()) {
+            identifier = identifier.getNext();
+            identifier.accept(this);
+        }
+
+        return null;
+    }
+
+    @Override
     public Object visit(Assignment node) {
         Identifier identifier = node.getIdentifier();
+        node.getExpression().accept(this);
         if (scope.resolve(identifier) == null) {
             scope.bind(identifier, new Variable());
+        }
+
+        return null;
+    }
+    @Override
+    // TODO * imports
+    public Object visit(Import node) {
+        node.getProgram().accept(this);
+        org.compilerbau.minipython.symbol.Import imported = new org.compilerbau.minipython.symbol.Import(node.getProgram().getBlock().getScope());
+
+        if(node.getImports().size() == 0) {
+
+        } else {
+            for(String importIdentifier : node.getImports()) {
+                // Check if imports are valid
+                Symbol symbol = node.getProgram().getBlock().getScope().resolve(importIdentifier);
+                if(symbol == null) {
+                    throw new SymbolException(importIdentifier + " doesn't exist in " + node.getPath());
+                } else if (scope.resolve(importIdentifier) != null) {
+                    throw new SymbolException(importIdentifier + " is already imported or defined");
+                }
+
+                scope.bind(importIdentifier, imported);
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Object visit(Identifier node) {
+        Symbol symbol = scope.resolve(node.getIdentifier());
+
+        if(symbol == null) {
+            throw new SymbolException(node.getIdentifier() + " is not defined");
         }
 
         return null;
@@ -41,7 +92,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
     @Override
     public Object visit(org.compilerbau.minipython.ast.Class node) {
-        if(scope.resolve(node.getName()) != null) {
+        if(scope.resolveLocally(node.getName()) != null) {
             throw new SymbolException("Class " + node.getName() + " is already defined");
         }
 
@@ -61,8 +112,10 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
             }
 
             node.setScope(scope);
+            Class newClass = new Class(scope);
+            newClass.setClass(node);
 
-            return new Class(scope);
+            return newClass;
         }));
 
         return null;
