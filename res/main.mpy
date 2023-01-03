@@ -1,20 +1,19 @@
 #import B from "res/class.mpy"
-#import A, B from "res/class.mpy"
+import * from "res/class.mpy"
 import f from "res/function.mpy"
-
 
 a = f(7)
 print(a)
 
-#b = B()
-#b.set_a(3)
-#b.print_a()
+b = B()
+b.set_a(3)
+b.print_a()
 
-#c = B()
-#c.set_a(5)
-#b.print_a()
-#c.print_a()
+c = B()
+c.set_a(5)
+b.print_a()
+c.print_a()
 
-#d = A()
-#d.set_a(7)
-#print(d.calc_a())
+d = A()
+d.set_a(7)
+print(d.calc_a())
