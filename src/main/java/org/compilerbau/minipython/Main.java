@@ -28,7 +28,7 @@ public class Main {
         /*
         TreeViewer viewer = new TreeViewer(Collections.emptyList(), program);
         viewer.open();
-         */
+        */
 
         program.accept(new SymbolVisitor());
 

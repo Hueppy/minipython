@@ -1,5 +1,8 @@
 package org.compilerbau.minipython.symbol;
 
+import java.util.List;
+import java.util.Map;
+
 public class Variable extends Symbol implements Scoped {
     private Object value;
 

@@ -65,6 +65,7 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     public Node visitBasicIdentifier(MiniPythonParser.BasicIdentifierContext ctx) {
         Identifier identifier = new Identifier();
         identifier.setIdentifier(ctx.IDENTIFIER().getText());
+
         return identifier;
     }
 
@@ -82,6 +83,7 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
 
         Identifier identifier = (Identifier) ctx.identifier().accept(this);
         identifier.setNext(next);
+        identifier.getNext().setPrevious(identifier);
         return identifier;
     }
 

@@ -34,11 +34,16 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Call node) {
         Identifier identifier = node.getIdentifier();
-        identifier.accept(this);
 
-        while (identifier.hasNext()) {
-            identifier = identifier.getNext();
+        if(identifier.hasNext()) {
             identifier.accept(this);
+
+            while (identifier.hasNext()) {
+                identifier = identifier.getNext();
+                identifier.accept(this);
+            }
+        } else {
+            return identifier.accept(this);
         }
 
         return null;
@@ -47,9 +52,11 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Assignment node) {
         Identifier identifier = node.getIdentifier();
-        node.getExpression().accept(this);
+
         if (scope.resolve(identifier) == null) {
-            scope.bind(identifier, new Variable());
+            Variable var = new Variable();
+            var.setValue(node.getExpression().accept(this));
+            scope.bind(identifier, var);
         }
 
         return null;
@@ -57,13 +64,12 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Import node) {
         node.getProgram().accept(this);
-        org.compilerbau.minipython.symbol.Import imported = new org.compilerbau.minipython.symbol.Import(node.getProgram().getBlock().getScope());
 
         if(node.getImports().size() == 0) {
             for(Map.Entry<String, Symbol> entry : node.getProgram().getBlock().getScope().getSymbols().entrySet()) {
                 // Bind only functions and classes
                 if(entry.getValue() instanceof Function || entry.getValue() instanceof Class) {
-                    scope.getParent().bind(entry.getKey(), imported);
+                    scope.getParent().bind(entry.getKey(), entry.getValue());
                 }
             }
         } else {
@@ -79,7 +85,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
                     throw new SymbolException(importIdentifier + " is neither a class or function");
                 }
 
-                scope.getParent().bind(importIdentifier, imported);
+                scope.getParent().bind(importIdentifier, symbol);
             }
         }
 
@@ -90,13 +96,23 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     public Object visit(Identifier node) {
         Symbol symbol = scope.resolve(node.getIdentifier());
 
-        /*
+        if(node.hasPrevious() && symbol == null) {
+            Symbol prev = scope.resolve(node.getPrevious().getIdentifier());
+
+            if (prev instanceof Variable) {
+                Object value = ((Variable) prev).getValue();
+
+                if (value instanceof org.compilerbau.minipython.symbol.Class) {
+                    symbol = ((org.compilerbau.minipython.symbol.Class) value).getScope().resolve(node.getIdentifier());
+                }
+            }
+        }
+
         if(symbol == null) {
             throw new SymbolException(node.getIdentifier() + " is not defined");
         }
-        */
 
-        return null;
+        return symbol;
     }
 
     @Override
@@ -127,7 +143,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
             return newClass;
         }));
 
-        return null;
+        return scope.resolve(node.getName());
     }
 
     @Override

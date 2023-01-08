@@ -19,7 +19,3 @@ class B(A):
     print(self.a)
   #end
 #end
-
-b = B()
-b.set_a(3)
-b.print_a()

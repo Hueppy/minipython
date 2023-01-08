@@ -7,6 +7,8 @@ public class Identifier extends Expression {
     private String identifier;
     private Identifier next;
 
+    private Identifier previous;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -19,12 +21,20 @@ public class Identifier extends Expression {
         return next;
     }
 
+    public Identifier getPrevious() { return previous; }
+
     public void setNext(Identifier next) {
         this.next = next;
     }
 
+    public void setPrevious(Identifier previous) { this.previous = previous; }
+
     public boolean hasNext() {
         return next != null;
+    }
+
+    public boolean hasPrevious() {
+        return previous != null;
     }
 
     @Override
