@@ -51,6 +51,8 @@ public final class Scope {
     public Symbol resolveLocally(String name) {
         if (symbols.containsKey(name)) {
             return symbols.get(name);
+        } else if (parent != null) {
+            return parent.symbols.get(name);
         }
 
         return null;
