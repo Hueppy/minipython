@@ -1,5 +1,5 @@
-#import B from "res/class.mpy"
-import * from "res/class.mpy"
+import A, B from "res/class.mpy"
+#import * from "res/class.mpy"
 import f from "res/function.mpy"
 
 a = f(7)
@@ -14,7 +14,7 @@ b.print_a()
 c = B()
 c.set_a(5)
 b.print_a()
-c.print_a()
+c.print_a() 
 
 d = A()
 d.set_a(7)
@@ -24,6 +24,6 @@ if b.get_a() + 1 == 1:
     print(1)
 #end
 
-while b.get_a() > 1:
+while not b.get_a():
     print(1)
 #end

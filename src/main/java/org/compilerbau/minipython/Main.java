@@ -38,6 +38,5 @@ public class Main {
          */
 
         program.accept(new BuilderVisitor(Path.of("out")));
-
     }
 }
