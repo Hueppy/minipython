@@ -1,8 +1,8 @@
-import f from "res/function.mpy"
+import * from "res/function.mpy"
 
 class A:
-  def set_a(self, a):
-    self.a = a
+  def set_a(self, b):
+    self.a = b
   #end
 
   def get_a(self):

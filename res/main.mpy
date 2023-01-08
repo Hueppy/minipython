@@ -19,3 +19,11 @@ c.print_a()
 d = A()
 d.set_a(7)
 print(d.calc_a())
+
+if b.get_a() + 1 == 1:
+    print(1)
+#end
+
+while b.get_a() > 1:
+    print(1)
+#end
