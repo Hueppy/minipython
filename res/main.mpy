@@ -1,8 +1,9 @@
 #import B from "res/class.mpy"
 import * from "res/class.mpy"
-import f from "res/function.mpy"
+#import f from "res/function.mpy"
 
 a = f(7)
+print("called f")
 print(a)
 
 b = B()

@@ -55,14 +55,16 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
         return null;
     }
     @Override
-    // TODO * imports
     public Object visit(Import node) {
         node.getProgram().accept(this);
         org.compilerbau.minipython.symbol.Import imported = new org.compilerbau.minipython.symbol.Import(node.getProgram().getBlock().getScope());
 
         if(node.getImports().size() == 0) {
-            for(String importIdentifier : node.getProgram().getBlock().getScope().getSymbols().keySet()) {
-                scope.getParent().bind(importIdentifier, imported);
+            for(Map.Entry<String, Symbol> entry : node.getProgram().getBlock().getScope().getSymbols().entrySet()) {
+                // Bind only functions and classes
+                if(entry.getValue() instanceof Function || entry.getValue() instanceof Class) {
+                    scope.getParent().bind(entry.getKey(), imported);
+                }
             }
         } else {
             for(String importIdentifier : node.getImports()) {
@@ -71,8 +73,10 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
 
                 if(symbol == null) {
                     throw new SymbolException(importIdentifier + " doesn't exist in " + node.getPath());
-                } else if (scope.getParent().resolve(importIdentifier) != null) {
+                } else if(scope.getParent().resolve(importIdentifier) != null) {
                     throw new SymbolException(importIdentifier + " is already imported or defined");
+                } else if(symbol instanceof Function == false && symbol instanceof Class == false) {
+                    throw new SymbolException(importIdentifier + " is neither a class or function");
                 }
 
                 scope.getParent().bind(importIdentifier, imported);
