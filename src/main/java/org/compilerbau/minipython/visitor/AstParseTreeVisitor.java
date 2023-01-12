@@ -305,6 +305,23 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitTupleExpression(MiniPythonParser.TupleExpressionContext ctx) {
+        MiniPythonParser.ExpressionContext left = ctx.expression(0);
+
+        Tuple tuple;
+        if (left instanceof MiniPythonParser.TupleExpressionContext) {
+            tuple = (Tuple) left.accept(this);
+        } else {
+            tuple = new Tuple();
+            tuple.getExpressions().add((Expression) left.accept(this));
+        }
+
+        tuple.getExpressions().add((Expression) ctx.expression(1).accept(this));
+
+        return tuple;
+    }
+
+    @Override
     public Node visitConditional(MiniPythonParser.ConditionalContext ctx) {
         Conditional conditional = new Conditional();
         conditional.setPosition(buildPosition(ctx));

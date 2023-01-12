@@ -6,6 +6,7 @@ import org.compilerbau.minipython.ast.Number;
 
 public abstract class AstVisitorBase<T> implements AstVisitor<T> {
     public T visit(Assignment node) { return null; }
+    public T visit(Tuple node) { return null; }
     public T visit(Calculation node) { return null; }
     public T visit(Call node) { return null; }
     public T visit(Comparison node) { return null; }
