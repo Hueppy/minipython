@@ -18,6 +18,7 @@ expression         : call                                 # CallExpression
                    | STRING                               # TextExpression
                    | BOOLEAN                              # TruthExpression
                    | LBRACKET expression RBRACKET         # SubexpressionExpression
+                   | expression COMMA expression          # TupleExpression
                    | expression MULTIPLY expression       # MultiplicationExpression
                    | expression DIVIDE expression         # DivisionExpression
                    | expression ADD expression            # AdditionExpression
