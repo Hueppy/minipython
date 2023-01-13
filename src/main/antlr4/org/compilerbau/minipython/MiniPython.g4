@@ -34,7 +34,7 @@ expression         : call                                 # CallExpression
                    | expression OR expression             # DisjunctionExpression
                    ;
 
-assignment         : identifier ASSIGN expression ;
+assignment         : identifier (COMMA identifier)* ASSIGN expression ;
 
 return             : RETURN expression ;
 

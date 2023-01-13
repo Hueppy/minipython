@@ -115,6 +115,13 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
 
         @Override
+        public CBuilder.Expression visit(Tuple node) {
+            return new CBuilder.literals.TupleLiteral(node.getExpressions().stream()
+                    .map(x -> x.accept(this))
+                    .collect(Collectors.toList()));
+        }
+
+        @Override
         public CBuilder.Expression visit(Calculation node) {
             final Supplier<String> func = () -> {
                 switch (node.getOperator()) {
@@ -135,6 +142,11 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         @Override
         public CBuilder.Expression visit(Negation node) {
             return new CBuilder.keywords.bool.NotKeyword(node.getExpression().accept(this));
+        }
+
+        @Override
+        public CBuilder.Expression visit(ElementAccess node) {
+            return new CBuilder.tuple.TupleReference(node.getTuple().accept(this), node.getIndex());
         }
     };
 

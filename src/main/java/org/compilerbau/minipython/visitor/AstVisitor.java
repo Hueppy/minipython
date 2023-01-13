@@ -23,4 +23,6 @@ public interface AstVisitor<T> {
     T visit(Return node);
     T visit(Import node);
     T visit(Block node);
+
+    T visit(ElementAccess elementAccess);
 }

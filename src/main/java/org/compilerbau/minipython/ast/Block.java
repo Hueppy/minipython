@@ -7,7 +7,7 @@ import org.compilerbau.minipython.visitor.AstVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Block extends Node {
+public class Block extends Statement {
     private final List<Statement> statements;
     private Scope scope;
 

@@ -28,4 +28,6 @@ public abstract class AstVisitorBase<T> implements AstVisitor<T> {
     public T visit(Block node) {
         return null;
     }
+
+    public T visit(ElementAccess elementAccess) { return null; }
 }
