@@ -7,10 +7,7 @@ identifier         : IDENTIFIER                # BasicIdentifier
                    | identifier DOT IDENTIFIER # RecursiveIdentifier
                    ;
 
-call_parameter     : expression (COMMA expression)*
-                   |
-                   ;
-call               : identifier LBRACKET call_parameter RBRACKET ;
+call               : identifier LBRACKET expression? RBRACKET ;
 
 expression         : call                                 # CallExpression
                    | identifier                           # VariableExpression

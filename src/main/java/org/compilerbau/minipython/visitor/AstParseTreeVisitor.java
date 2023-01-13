@@ -116,7 +116,14 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         call.setModule(this.currentModule);
         call.setPosition(buildPosition(ctx));
         call.setIdentifier((Identifier) ctx.call().identifier().accept(this));
-        visitExpressions(ctx.call().call_parameter().expression(), call.getParameter());
+        if (ctx.call().expression() != null) {
+            Expression parameter = (Expression) ctx.call().expression().accept(this);
+            if (parameter instanceof Tuple) {
+                call.getParameter().addAll(((Tuple)parameter).getExpressions());
+            } else {
+                call.getParameter().add(parameter);
+            }
+        }
         return call;
     }
 
@@ -151,7 +158,7 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
             block.setModule(this.currentModule);
             block.setPosition(buildPosition(ctx));
 
-            if (!(expression instanceof Reference)) {
+            if (!(expression instanceof Identifier)) {
                 // Kinda hacked
                 Identifier identifier = new Identifier();
                 identifier.setModule(this.currentModule);

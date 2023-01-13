@@ -1,6 +1,8 @@
 a, b = 1, 2
-print(a)
-print(b)
+print(a, b)
+
 a, b = b, a
-print(a)
-print(b)
+print(a, b)
+
+t = 6, 9
+print(t)
