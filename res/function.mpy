@@ -4,3 +4,4 @@ def f(a):
 
 a = f(7)
 print(a)
+b = 1

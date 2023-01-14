@@ -23,7 +23,7 @@ public abstract class AstVisitorBase<T> implements AstVisitor<T> {
     public T visit(Truth node) { return null; }
     public T visit(Identifier node) { return null; }
     public T visit(Return node) { return null; }
-
+    public T visit(Import node) { return null; }
     public T visit(Block node) {
         return null;
     }

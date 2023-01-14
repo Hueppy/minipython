@@ -123,6 +123,14 @@ public class PrintTree extends AstVisitorBase<String> {
     }
 
     @Override
+    public String visit(Import node) {
+        return String.format("import %s [%s]",
+            node.getPath(),
+            String.join(", ", node.getImports())
+        );
+    }
+
+    @Override
     public String visit(Identifier node) {
         String identifier = node.getIdentifier();
         if (node.hasNext()) {

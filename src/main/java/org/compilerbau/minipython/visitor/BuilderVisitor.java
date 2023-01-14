@@ -2,7 +2,10 @@ package org.compilerbau.minipython.visitor;
 
 import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
+import org.compilerbau.minipython.ast.Module;
 import org.compilerbau.minipython.ast.Number;
+import org.compilerbau.minipython.symbol.BuiltInFunction;
+import org.compilerbau.minipython.symbol.Scope;
 import org.compilerbau.minipython.symbol.Symbol;
 import org.compilerbau.minipython.symbol.Variable;
 
@@ -13,6 +16,17 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class BuilderVisitor extends AstVisitorBase<Object> {
+    private Scope scope;
+
+    private String buildIdentifier(Module module, String name) {
+        if(scope.resolve(name) instanceof BuiltInFunction) {
+            return name;
+        } else if(module != null) {
+            return name + "_" + module.getId();
+        } else {
+            return name + "_0";
+        }
+    }
     private final AstVisitorBase<CBuilder.Expression> expressionBuilder = new AstVisitorBase<>() {
         @Override
         public CBuilder.Expression visit(Text node) {
@@ -29,12 +43,28 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
             return new CBuilder.literals.IntLiteral(node.getValue());
         }
 
+        private String buildSymbol(Symbol symbol, Node node, String name) {
+            if(symbol instanceof org.compilerbau.minipython.symbol.Class) {
+                return buildIdentifier(((org.compilerbau.minipython.symbol.Class) symbol).getClazz().getModule(), name);
+            } else if(symbol instanceof org.compilerbau.minipython.symbol.Function) {
+                return buildIdentifier(((org.compilerbau.minipython.symbol.Function) symbol).getFunction().getModule(), name);
+            } else {
+                return buildIdentifier(node.getModule(), name);
+            }
+        }
+
         @Override
         public CBuilder.Expression visit(Identifier node) {
-            CBuilder.Expression reference = new CBuilder.Reference(node.getIdentifier());
+            Symbol symbol = scope.resolve(node.getIdentifier());
+            String name = buildSymbol(symbol, node, node.getIdentifier());
+
+            CBuilder.Expression reference = new CBuilder.Reference(name);
+
             while (node.hasNext()) {
                 node = node.getNext();
-                reference = new CBuilder.objects.AttributeReference(node.getIdentifier(), reference);
+                String subName = buildSymbol((symbol instanceof Variable) ? (Symbol) ((Variable) symbol).getValue() : null, node, node.getIdentifier());
+
+                reference = new CBuilder.objects.AttributeReference(subName, reference);
             }
 
             return reference;
@@ -78,7 +108,9 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
 
             return node.getOperands().stream()
                     .map(x -> x.accept(this))
-                    .reduce((x, y) -> new CBuilder.objects.Call(new CBuilder.objects.AttributeReference(func.get(), x), Collections.singletonList(y)))
+                    .reduce((x, y) -> new CBuilder.objects.Call(
+                        new CBuilder.objects.AttributeReference(func.get(), x),
+                        Collections.singletonList(y)))
                     .get();
         }
 
@@ -114,15 +146,17 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
 
         @Override
         public CBuilder.Statement visit(Block node) {
-            for (String name: node.getScope().getSymbols().keySet()) {
+            Scope prevScope = scope;
+            scope = node.getScope();
+            for (String name : scope.getSymbols().keySet()) {
                 Symbol symbol = node.getScope().resolve(name);
                 if (symbol instanceof Variable) {
-                    variables.add(new CBuilder.variables.VariableDeclaration(name));
+                    variables.add(new CBuilder.variables.VariableDeclaration(buildIdentifier(node.getModule(), name)));
                 }
             }
 
             // hack :^)
-            return new CBuilder.conditions.IfThenElseStatement(
+            CBuilder.conditions.IfThenElseStatement cond = new CBuilder.conditions.IfThenElseStatement(
                     new CBuilder.conditions.conditionalStatement.IfStatement(
                         new CBuilder.literals.BoolLiteral(true),
                         node.getStatements().stream()
@@ -131,6 +165,10 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
                                 .collect(Collectors.toList())),
                     Optional.empty(),
                     Optional.empty());
+
+            scope = prevScope;
+
+            return cond;
         }
 
         @Override
@@ -182,6 +220,12 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
             BuilderVisitor.this.visit(node);
             return super.visit(node);
         }
+
+        @Override
+        public CBuilder.Statement visit(Import node) {
+            BuilderVisitor.this.visit(node);
+            return super.visit(node);
+        }
     };
 
     private final Path output;
@@ -199,10 +243,10 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         variables = new ArrayList<>();
 
         functions.add(new CBuilder.objects.functions.Function(
-                node.getName(),
+                buildIdentifier(node.getModule(), node.getName()),
                 Collections.singletonList(node.getBody().accept(statementVisitor)),
                 IntStream.range(0, node.getParameter().size())
-                        .mapToObj(x -> new CBuilder.objects.functions.Argument(node.getParameter().get(x), x))
+                        .mapToObj(x -> new CBuilder.objects.functions.Argument(buildIdentifier(node.getModule(), node.getParameter().get(x)), x))
                         .collect(Collectors.toList()),
                 variables));
 
@@ -232,8 +276,8 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
 
         classes.add(new CBuilder.objects.MPyClass(
-                node.getName(),
-                base != null ? new CBuilder.Reference(base) : new CBuilder.Reference("__MPyType_Object"),
+                buildIdentifier(node.getModule(), node.getName()),
+                base != null ? new CBuilder.Reference(buildIdentifier(node.getModule(), base)) : new CBuilder.Reference("__MPyType_Object"),
                 functions,
                 Map.of()));
 
@@ -242,6 +286,11 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         return super.visit(node);
     }
 
+    @Override
+    public Object visit(Import node) {
+        node.getProgram().accept(this);
+        return super.visit(node);
+    }
     @Override
     public Object visit(Program node) {
         CBuilder.Statement statement = node.getBlock().accept(statementVisitor);

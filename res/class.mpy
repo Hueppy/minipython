@@ -1,10 +1,16 @@
+import * from "res/function.mpy"
+
 class A:
-  def set_a(self, a):
-    self.a = a
+  def set_a(self, b):
+    self.a = b
   #end
 
-  def get_a(self, a):
+  def get_a(self):
     return self.a
+  #end
+
+  def calc_a(self):
+    return f(self.a)
   #end
 #end
 
@@ -13,7 +19,3 @@ class B(A):
     print(self.a)
   #end
 #end
-
-b = B()
-b.set_a(3)
-b.print_a()
