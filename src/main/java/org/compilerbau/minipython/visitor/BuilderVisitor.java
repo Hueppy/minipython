@@ -1,5 +1,6 @@
 package org.compilerbau.minipython.visitor;
 
+import CBuilder.variables.VariableDeclaration;
 import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Module;
@@ -11,6 +12,7 @@ import org.compilerbau.minipython.symbol.Variable;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -51,6 +53,13 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
             } else {
                 return buildIdentifier(node.getModule(), name);
             }
+        }
+
+        @Override
+        public CBuilder.Expression visit(org.compilerbau.minipython.ast.List node) {
+            return new CBuilder.literals.ListLiteral(
+                    node.getValues().stream().map(x -> x.accept(this)).collect(Collectors.toList())
+            );
         }
 
         @Override
@@ -229,7 +238,7 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
     };
 
     private final Path output;
-    private List<CBuilder.variables.VariableDeclaration> variables = new ArrayList<>();
+    private List<VariableDeclaration> variables = new ArrayList<>();
     private List<CBuilder.objects.functions.Function> functions = new ArrayList<>();
     private List<CBuilder.objects.MPyClass> classes = new ArrayList<>();
 

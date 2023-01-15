@@ -153,6 +153,15 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitListExpression(MiniPythonParser.ListExpressionContext ctx) {
+        org.compilerbau.minipython.ast.List list = new org.compilerbau.minipython.ast.List();
+        for (MiniPythonParser.ExpressionContext expression: ctx.list().expression()) {
+            list.getValues().add((Expression) expression.accept(this));
+        }
+        return list;
+    }
+
+    @Override
     public Node visitTextExpression(MiniPythonParser.TextExpressionContext ctx) {
         Text text = new Text();
         text.setModule(this.currentModule);
