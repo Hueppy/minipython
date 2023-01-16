@@ -80,6 +80,11 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
 
         @Override
+        public CBuilder.Expression visit(Element node) {
+            return new CBuilder.list.ListReference(node.getIdentifier().accept(this), node.getIndex());
+        }
+
+        @Override
         public CBuilder.Expression visit(Call node) {
             return new CBuilder.objects.Call(
                     node.getIdentifier().accept(this),

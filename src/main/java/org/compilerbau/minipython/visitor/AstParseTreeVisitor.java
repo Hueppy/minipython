@@ -144,6 +144,14 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitElementExpression(MiniPythonParser.ElementExpressionContext ctx) {
+        Element element = new Element();
+        element.setIdentifier((Identifier) ctx.identifier().accept(this));
+        element.setIndex(Integer.parseInt(ctx.INT().getText()));
+        return element;
+    }
+
+    @Override
     public Node visitNumberExpression(MiniPythonParser.NumberExpressionContext ctx) {
         Number number = new Number();
         number.setModule(this.currentModule);

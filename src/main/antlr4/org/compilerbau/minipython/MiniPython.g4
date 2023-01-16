@@ -14,26 +14,27 @@ call               : identifier LBRACKET call_parameter RBRACKET ;
 
 list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET ;
 
-expression         : call                                 # CallExpression
-                   | identifier                           # VariableExpression
-                   | INT                                  # NumberExpression
-                   | STRING                               # TextExpression
-                   | BOOLEAN                              # TruthExpression
-                   | list                                 # ListExpression
-                   | LBRACKET expression RBRACKET         # SubexpressionExpression
-                   | expression MULTIPLY expression       # MultiplicationExpression
-                   | expression DIVIDE expression         # DivisionExpression
-                   | expression ADD expression            # AdditionExpression
-                   | expression SUBTRACT expression       # SubtractionExpression
-                   | expression EQUALS expression         # EqualityExpression
-                   | expression NOT_EQUALS expression     # InequalityExpression
-                   | expression GREATER_EQUALS expression # GreaterEqualExpression
-                   | expression LESS_EQUALS expression    # LessEqualExpression
-                   | expression GREATER_THAN expression   # GreaterThanExpression
-                   | expression LESS_THAN expression      # LessThanExpression
-                   | NOT expression                       # NegationExpression
-                   | expression AND expression            # ConjunctionExpression
-                   | expression OR expression             # DisjunctionExpression
+expression         : call                                         # CallExpression
+                   | identifier                                   # VariableExpression
+                   | identifier LSQUAREBRACKET INT RSQUAREBRACKET # ElementExpression
+                   | INT                                          # NumberExpression
+                   | STRING                                       # TextExpression
+                   | BOOLEAN                                      # TruthExpression
+                   | list                                         # ListExpression
+                   | LBRACKET expression RBRACKET                 # SubexpressionExpression
+                   | expression MULTIPLY expression               # MultiplicationExpression
+                   | expression DIVIDE expression                 # DivisionExpression
+                   | expression ADD expression                    # AdditionExpression
+                   | expression SUBTRACT expression               # SubtractionExpression
+                   | expression EQUALS expression                 # EqualityExpression
+                   | expression NOT_EQUALS expression             # InequalityExpression
+                   | expression GREATER_EQUALS expression         # GreaterEqualExpression
+                   | expression LESS_EQUALS expression            # LessEqualExpression
+                   | expression GREATER_THAN expression           # GreaterThanExpression
+                   | expression LESS_THAN expression              # LessThanExpression
+                   | NOT expression                               # NegationExpression
+                   | expression AND expression                    # ConjunctionExpression
+                   | expression OR expression                     # DisjunctionExpression
                    ;
 
 assignment         : identifier ASSIGN expression ;
