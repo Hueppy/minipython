@@ -3,6 +3,7 @@ package org.compilerbau.minipython.symbol;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public abstract class BuiltInFunction extends Symbol {
     public static final BuiltInFunction PRINT = new BuiltInFunction() {
@@ -32,6 +33,14 @@ public abstract class BuiltInFunction extends Symbol {
             } catch (NumberFormatException e) {
                 return value;
             }
+        }
+    };
+
+    public static final BuiltInFunction RANGE = new BuiltInFunction() {
+        @Override
+        public Object run(List<Object> args) {
+            // TODO: implement
+            return null;
         }
     };
 
