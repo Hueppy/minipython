@@ -1,7 +1,0 @@
-def f(a):
-    return a - 1
-#end
-
-a = f(7)
-print(a)
-b = 1

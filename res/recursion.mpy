@@ -1,9 +1,0 @@
-def f(a):
-  print(a)
-  if a > 0:
-    f(a - 1)
-  #end
-  print(a)
-#end
-
-f(10)

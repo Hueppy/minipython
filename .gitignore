@@ -1,5 +1,6 @@
-.idea
-target
-
-*.iml
-.attach*
+.vscode/
+bin/
+lib/
+src/MiniPython*.java
+src/MiniPython*.interp
+src/MiniPython*.tokens
