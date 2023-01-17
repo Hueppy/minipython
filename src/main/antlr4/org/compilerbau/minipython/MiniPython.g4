@@ -7,10 +7,7 @@ identifier         : IDENTIFIER                # BasicIdentifier
                    | identifier DOT IDENTIFIER # RecursiveIdentifier
                    ;
 
-call_parameter     : expression (COMMA expression)*
-                   |
-                   ;
-call               : identifier LBRACKET call_parameter RBRACKET ;
+call               : identifier LBRACKET expression? RBRACKET ;
 
 expression         : call                                 # CallExpression
                    | identifier                           # VariableExpression
@@ -18,6 +15,7 @@ expression         : call                                 # CallExpression
                    | STRING                               # TextExpression
                    | BOOLEAN                              # TruthExpression
                    | LBRACKET expression RBRACKET         # SubexpressionExpression
+                   | expression COMMA expression          # TupleExpression
                    | expression MULTIPLY expression       # MultiplicationExpression
                    | expression DIVIDE expression         # DivisionExpression
                    | expression ADD expression            # AdditionExpression
@@ -33,7 +31,7 @@ expression         : call                                 # CallExpression
                    | expression OR expression             # DisjunctionExpression
                    ;
 
-assignment         : identifier ASSIGN expression ;
+assignment         : identifier (COMMA identifier)* ASSIGN expression ;
 
 return             : RETURN expression ;
 

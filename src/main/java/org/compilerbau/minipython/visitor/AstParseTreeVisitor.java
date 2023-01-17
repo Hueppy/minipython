@@ -14,6 +14,8 @@ import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Module;
 import org.compilerbau.minipython.ast.Number;
 import org.compilerbau.minipython.exception.AstException;
+import org.compilerbau.minipython.symbol.Scope;
+import org.compilerbau.minipython.symbol.Variable;
 
 import java.io.IOException;
 import java.util.List;
@@ -114,7 +116,14 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         call.setModule(this.currentModule);
         call.setPosition(buildPosition(ctx));
         call.setIdentifier((Identifier) ctx.call().identifier().accept(this));
-        visitExpressions(ctx.call().call_parameter().expression(), call.getParameter());
+        if (ctx.call().expression() != null) {
+            Expression parameter = (Expression) ctx.call().expression().accept(this);
+            if (parameter instanceof Tuple) {
+                call.getParameter().addAll(((Tuple)parameter).getExpressions());
+            } else {
+                call.getParameter().add(parameter);
+            }
+        }
         return call;
     }
 
@@ -135,12 +144,60 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
 
     @Override
     public Node visitAssignment(MiniPythonParser.AssignmentContext ctx) {
-        Assignment assignment = new Assignment();
-        assignment.setModule(this.currentModule);
-        assignment.setPosition(buildPosition(ctx));
-        assignment.setIdentifier((Identifier) ctx.identifier().accept(this));
-        assignment.setExpression((Expression) ctx.expression().accept(this));
-        return assignment;
+        Expression expression = (Expression) ctx.expression().accept(this);
+
+        if (ctx.identifier().size() == 1) {
+            Assignment assignment = new Assignment();
+            assignment.setModule(this.currentModule);
+            assignment.setPosition(buildPosition(ctx));
+            assignment.setIdentifier((Identifier) ctx.identifier(0).accept(this));
+            assignment.setExpression(expression);
+            return assignment;
+        } else {
+            Block block = new Block();
+            block.setModule(this.currentModule);
+            block.setPosition(buildPosition(ctx));
+
+            if (!(expression instanceof Identifier)) {
+                // Kinda hacked
+                Identifier identifier = new Identifier();
+                identifier.setModule(this.currentModule);
+                identifier.setPosition(buildPosition(ctx));
+                identifier.setIdentifier("___temp_tuple___");
+
+                Scope scope = new Scope();
+                scope.bind(identifier, new Variable());
+
+                Assignment assignment = new Assignment();
+                assignment.setModule(this.currentModule);
+                assignment.setPosition(buildPosition(ctx));
+                assignment.setIdentifier(identifier);
+                assignment.setExpression(expression);
+
+                block.setScope(scope);
+                block.getStatements().add(assignment);
+
+                expression = identifier;
+            }
+
+            for (int i = 0; i < ctx.identifier().size(); i++) {
+                ElementAccess access = new ElementAccess();
+                access.setModule(this.currentModule);
+                access.setPosition(buildPosition(ctx));
+                access.setTuple(expression);
+                access.setIndex(i);
+
+                Assignment assignment = new Assignment();
+                assignment.setModule(this.currentModule);
+                assignment.setPosition(buildPosition(ctx));
+                assignment.setIdentifier((Identifier) ctx.identifier(i).accept(this));
+                assignment.setExpression(access);
+
+                block.getStatements().add(assignment);
+            }
+
+            return block;
+        }
     }
 
     @Override
@@ -302,6 +359,23 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     @Override
     public Node visitSubexpressionExpression(MiniPythonParser.SubexpressionExpressionContext ctx) {
         return ctx.expression().accept(this);
+    }
+
+    @Override
+    public Node visitTupleExpression(MiniPythonParser.TupleExpressionContext ctx) {
+        MiniPythonParser.ExpressionContext left = ctx.expression(0);
+
+        Tuple tuple;
+        if (left instanceof MiniPythonParser.TupleExpressionContext) {
+            tuple = (Tuple) left.accept(this);
+        } else {
+            tuple = new Tuple();
+            tuple.getExpressions().add((Expression) left.accept(this));
+        }
+
+        tuple.getExpressions().add((Expression) ctx.expression(1).accept(this));
+
+        return tuple;
     }
 
     @Override

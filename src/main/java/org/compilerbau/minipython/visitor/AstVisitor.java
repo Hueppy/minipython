@@ -5,6 +5,7 @@ import org.compilerbau.minipython.ast.Number;
 
 public interface AstVisitor<T> {
     T visit(Assignment node);
+    T visit(Tuple node);
     T visit(Calculation node);
     T visit(Call node);
     T visit(Comparison node);
@@ -22,4 +23,6 @@ public interface AstVisitor<T> {
     T visit(Return node);
     T visit(Import node);
     T visit(Block node);
+
+    T visit(ElementAccess elementAccess);
 }
