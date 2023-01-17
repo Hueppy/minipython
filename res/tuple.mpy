@@ -1,1 +1,9 @@
- b = 4, 3+7
+t = 1, 2
+a, b = t
+print(a, b)
+
+a, b = b, a
+print(a, b)
+
+t = 6, 9
+print(t)
