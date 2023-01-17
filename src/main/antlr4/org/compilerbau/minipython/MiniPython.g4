@@ -12,7 +12,9 @@ call_parameter     : expression (COMMA expression)*
                    ;
 call               : identifier LBRACKET call_parameter RBRACKET ;
 
-list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET ;
+list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET          # StaticList
+                   | LSQUAREBRACKET expression FOR identifier IN expression RSQUAREBRACKET # ListComprehension
+                   ;
 
 expression         : call                                         # CallExpression
                    | identifier                                   # VariableExpression
@@ -91,6 +93,9 @@ COMMA              : ',';
 
 LSQUAREBRACKET     : '[';
 RSQUAREBRACKET     : ']';
+
+FOR                : 'for' ;
+IN                 : 'in' ;
 
 MULTIPLY           : '*';
 DIVIDE             : '/';

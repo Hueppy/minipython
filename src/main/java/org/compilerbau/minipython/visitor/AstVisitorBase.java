@@ -17,6 +17,7 @@ public abstract class AstVisitorBase<T> implements AstVisitor<T> {
     }
     public T visit(Function node) { return null; }
     public T visit(List node) { return null; }
+    public T visit(Comprehension node) { return null; }
     public T visit(Loop node) { return null; }
     public T visit(Number node) { return null; }
     public T visit(Program node) { return null; }

@@ -14,6 +14,7 @@ public interface AstVisitor<T> {
     T visit(Negation node);
     T visit(Function node);
     T visit(List node);
+    T visit(Comprehension node);
     T visit(Loop node);
     T visit(Number node);
     T visit(Program node);
