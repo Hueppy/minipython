@@ -9,7 +9,7 @@ identifier         : IDENTIFIER                # BasicIdentifier
 
 call               : identifier LBRACKET expression? RBRACKET ;
 
-list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET          # StaticList
+list               : LSQUAREBRACKET expression RSQUAREBRACKET                              # StaticList
                    | LSQUAREBRACKET expression FOR identifier IN expression RSQUAREBRACKET # ListComprehension
                    ;
 

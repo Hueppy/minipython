@@ -222,8 +222,11 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         org.compilerbau.minipython.ast.List list = new org.compilerbau.minipython.ast.List();
         list.setModule(this.currentModule);
         list.setPosition(buildPosition(ctx));
-        for (MiniPythonParser.ExpressionContext expression: ctx.expression()) {
-            list.getValues().add((Expression) expression.accept(this));
+        Expression expression = (Expression) ctx.expression().accept(this);
+        if (expression instanceof Tuple) {
+            list.getValues().addAll(((Tuple)expression).getExpressions());
+        } else {
+            list.getValues().add(expression);
         }
         return list;
     }
