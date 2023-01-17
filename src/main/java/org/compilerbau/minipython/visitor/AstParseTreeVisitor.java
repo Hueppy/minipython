@@ -32,7 +32,6 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
         return ctx.start.getLine() + ":" + ctx.start.getCharPositionInLine();
     }
     @Override
-    // TODO Prevent somehow import loops
     public Node visitImport_statement(MiniPythonParser.Import_statementContext ctx) {
         Import imp = new Import();
         // Remove first and last character
@@ -234,6 +233,8 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     @Override
     public Node visitListComprehension(MiniPythonParser.ListComprehensionContext ctx) {
         Comprehension comprehension = new Comprehension();
+        comprehension.setModule(this.currentModule);
+        comprehension.setPosition(buildPosition(ctx));
         comprehension.setExpression((Expression) ctx.expression(0).accept(this));
         comprehension.setIdentifier((Identifier) ctx.identifier().accept(this));
         comprehension.setList((Expression) ctx.expression(1).accept(this));
