@@ -1,8 +1,1 @@
-a, b = 1, 2
-print(a, b)
-
-a, b = b, a
-print(a, b)
-
-t = 6, 9
-print(t)
+ b = 4, 3+7

@@ -19,9 +19,7 @@ expression         : call                                         # CallExpressi
                    | INT                                          # NumberExpression
                    | STRING                                       # TextExpression
                    | BOOLEAN                                      # TruthExpression
-                   | list                                         # ListExpression
                    | LBRACKET expression RBRACKET                 # SubexpressionExpression
-                   | expression COMMA expression                  # TupleExpression
                    | expression MULTIPLY expression               # MultiplicationExpression
                    | expression DIVIDE expression                 # DivisionExpression
                    | expression ADD expression                    # AdditionExpression
@@ -35,6 +33,8 @@ expression         : call                                         # CallExpressi
                    | NOT expression                               # NegationExpression
                    | expression AND expression                    # ConjunctionExpression
                    | expression OR expression                     # DisjunctionExpression
+                   | list                                         # ListExpression
+                   | expression COMMA expression                  # TupleExpression
                    ;
 
 assignment         : identifier (COMMA identifier)* ASSIGN expression ;
