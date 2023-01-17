@@ -229,6 +229,7 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
         nest(() -> {
             scope.bind("print", BuiltInFunction.PRINT);
             scope.bind("input", BuiltInFunction.INPUT);
+            scope.bind("range", BuiltInFunction.RANGE);
 
             node.getBlock().accept(this);
 

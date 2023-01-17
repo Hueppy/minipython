@@ -9,26 +9,32 @@ identifier         : IDENTIFIER                # BasicIdentifier
 
 call               : identifier LBRACKET expression? RBRACKET ;
 
-expression         : call                                 # CallExpression
-                   | identifier                           # VariableExpression
-                   | INT                                  # NumberExpression
-                   | STRING                               # TextExpression
-                   | BOOLEAN                              # TruthExpression
-                   | LBRACKET expression RBRACKET         # SubexpressionExpression
-                   | expression COMMA expression          # TupleExpression
-                   | expression MULTIPLY expression       # MultiplicationExpression
-                   | expression DIVIDE expression         # DivisionExpression
-                   | expression ADD expression            # AdditionExpression
-                   | expression SUBTRACT expression       # SubtractionExpression
-                   | expression EQUALS expression         # EqualityExpression
-                   | expression NOT_EQUALS expression     # InequalityExpression
-                   | expression GREATER_EQUALS expression # GreaterEqualExpression
-                   | expression LESS_EQUALS expression    # LessEqualExpression
-                   | expression GREATER_THAN expression   # GreaterThanExpression
-                   | expression LESS_THAN expression      # LessThanExpression
-                   | NOT expression                       # NegationExpression
-                   | expression AND expression            # ConjunctionExpression
-                   | expression OR expression             # DisjunctionExpression
+list               : LSQUAREBRACKET expression (COMMA expression)* RSQUAREBRACKET          # StaticList
+                   | LSQUAREBRACKET expression FOR identifier IN expression RSQUAREBRACKET # ListComprehension
+                   ;
+
+expression         : call                                         # CallExpression
+                   | identifier                                   # VariableExpression
+                   | identifier LSQUAREBRACKET INT RSQUAREBRACKET # ElementExpression
+                   | INT                                          # NumberExpression
+                   | STRING                                       # TextExpression
+                   | BOOLEAN                                      # TruthExpression
+                   | list                                         # ListExpression
+                   | LBRACKET expression RBRACKET                 # SubexpressionExpression
+                   | expression COMMA expression                  # TupleExpression
+                   | expression MULTIPLY expression               # MultiplicationExpression
+                   | expression DIVIDE expression                 # DivisionExpression
+                   | expression ADD expression                    # AdditionExpression
+                   | expression SUBTRACT expression               # SubtractionExpression
+                   | expression EQUALS expression                 # EqualityExpression
+                   | expression NOT_EQUALS expression             # InequalityExpression
+                   | expression GREATER_EQUALS expression         # GreaterEqualExpression
+                   | expression LESS_EQUALS expression            # LessEqualExpression
+                   | expression GREATER_THAN expression           # GreaterThanExpression
+                   | expression LESS_THAN expression              # LessThanExpression
+                   | NOT expression                               # NegationExpression
+                   | expression AND expression                    # ConjunctionExpression
+                   | expression OR expression                     # DisjunctionExpression
                    ;
 
 assignment         : identifier (COMMA identifier)* ASSIGN expression ;
@@ -82,6 +88,12 @@ ASSIGN             : '=';
 COLON              : ':';
 DOT                : '.';
 COMMA              : ',';
+
+LSQUAREBRACKET     : '[';
+RSQUAREBRACKET     : ']';
+
+FOR                : 'for' ;
+IN                 : 'in' ;
 
 MULTIPLY           : '*';
 DIVIDE             : '/';

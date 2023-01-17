@@ -14,12 +14,15 @@ public interface AstVisitor<T> {
     T visit(Connective node);
     T visit(Negation node);
     T visit(Function node);
+    T visit(List node);
+    T visit(Comprehension node);
     T visit(Loop node);
     T visit(Number node);
     T visit(Program node);
     T visit(Text node);
     T visit(Truth node);
     T visit(Identifier node);
+    T visit(Element node);
     T visit(Return node);
     T visit(Import node);
     T visit(Block node);

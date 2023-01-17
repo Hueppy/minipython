@@ -201,12 +201,45 @@ public class AstParseTreeVisitor extends MiniPythonBaseVisitor<Node> {
     }
 
     @Override
+    public Node visitElementExpression(MiniPythonParser.ElementExpressionContext ctx) {
+        Element element = new Element();
+        element.setIdentifier((Identifier) ctx.identifier().accept(this));
+        element.setIndex(Integer.parseInt(ctx.INT().getText()));
+        return element;
+    }
+
+    @Override
     public Node visitNumberExpression(MiniPythonParser.NumberExpressionContext ctx) {
         Number number = new Number();
         number.setModule(this.currentModule);
         number.setPosition(buildPosition(ctx));
         number.setValue(Integer.parseInt(ctx.INT().getText()));
         return number;
+    }
+
+    @Override
+    public Node visitStaticList(MiniPythonParser.StaticListContext ctx) {
+        org.compilerbau.minipython.ast.List list = new org.compilerbau.minipython.ast.List();
+        list.setModule(this.currentModule);
+        list.setPosition(buildPosition(ctx));
+        for (MiniPythonParser.ExpressionContext expression: ctx.expression()) {
+            list.getValues().add((Expression) expression.accept(this));
+        }
+        return list;
+    }
+
+    @Override
+    public Node visitListComprehension(MiniPythonParser.ListComprehensionContext ctx) {
+        Comprehension comprehension = new Comprehension();
+        comprehension.setExpression((Expression) ctx.expression(0).accept(this));
+        comprehension.setIdentifier((Identifier) ctx.identifier().accept(this));
+        comprehension.setList((Expression) ctx.expression(1).accept(this));
+        return comprehension;
+    }
+
+    @Override
+    public Node visitListExpression(MiniPythonParser.ListExpressionContext ctx) {
+        return ctx.list().accept(this);
     }
 
     @Override

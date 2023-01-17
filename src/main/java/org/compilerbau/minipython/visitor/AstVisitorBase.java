@@ -17,12 +17,15 @@ public abstract class AstVisitorBase<T> implements AstVisitor<T> {
         return null;
     }
     public T visit(Function node) { return null; }
+    public T visit(List node) { return null; }
+    public T visit(Comprehension node) { return null; }
     public T visit(Loop node) { return null; }
     public T visit(Number node) { return null; }
     public T visit(Program node) { return null; }
     public T visit(Text node) { return null; }
     public T visit(Truth node) { return null; }
     public T visit(Identifier node) { return null; }
+    public T visit(Element node) { return null; }
     public T visit(Return node) { return null; }
     public T visit(Import node) { return null; }
     public T visit(Block node) {

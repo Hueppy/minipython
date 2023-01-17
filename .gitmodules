@@ -1,4 +1,4 @@
 [submodule "Mini-Python-Builder"]
 	path = Mini-Python-Builder
 	url = git@github.com:Hueppy/Mini-Python-Builder.git
-	branch = tuple
+	branch = master

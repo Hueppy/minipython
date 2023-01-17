@@ -1,5 +1,11 @@
 package org.compilerbau.minipython.visitor;
 
+import CBuilder.Reference;
+import CBuilder.list.ListReference;
+import CBuilder.literals.ListLiteral;
+import CBuilder.objects.AttributeReference;
+import CBuilder.objects.functions.Argument;
+import CBuilder.variables.VariableDeclaration;
 import org.compilerbau.minipython.ast.*;
 import org.compilerbau.minipython.ast.Class;
 import org.compilerbau.minipython.ast.Module;
@@ -11,12 +17,22 @@ import org.compilerbau.minipython.symbol.Variable;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class BuilderVisitor extends AstVisitorBase<Object> {
     private Scope scope;
+    private java.util.function.Supplier<String> uniqueNameGenerator = new Supplier<>() {
+        private int id = 0;
+
+        @Override
+        public String get() {
+            return String.format("___func_%d___", id++);
+        }
+    };
+
 
     private String buildIdentifier(Module module, String name) {
         if(scope.resolve(name) instanceof BuiltInFunction) {
@@ -54,6 +70,60 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
         }
 
         @Override
+        public CBuilder.Expression visit(org.compilerbau.minipython.ast.List node) {
+            return new CBuilder.literals.ListLiteral(
+                    node.getValues().stream().map(x -> x.accept(this)).collect(Collectors.toList())
+            );
+        }
+
+        @Override
+        public CBuilder.Expression visit(Comprehension node) {
+            CBuilder.Reference source = new CBuilder.Reference(buildIdentifier(node.getModule(), "source"));
+            CBuilder.Reference target = new CBuilder.Reference(buildIdentifier(node.getModule(), "target"));
+            CBuilder.Reference i = new CBuilder.Reference(buildIdentifier(node.getModule(), "i"));
+            CBuilder.Reference value = new CBuilder.Reference(buildIdentifier(node.getModule(), node.getIdentifier().getIdentifier()));
+
+            /*
+            Scope prevScope = new Scope();
+            scope = new Scope();
+            scope.setParent(prevScope);
+            scope.bind(source.getName(), new Variable());
+            scope.bind(target.getName(), new Variable());
+            scope.bind(i.getName(), new Variable());
+            scope.bind(value.getName(), new Variable());
+             */
+
+            List<CBuilder.Statement> statements = new ArrayList<>();
+            statements.add(new CBuilder.variables.Assignment(target, new CBuilder.literals.ListLiteral(List.of())));
+            statements.add(new CBuilder.variables.Assignment(i, new CBuilder.literals.IntLiteral(0)));
+
+            List<CBuilder.Statement> loopStatements = new ArrayList<>();
+            statements.add(new CBuilder.conditions.conditionalStatement.WhileStatement(
+                    new CBuilder.objects.Call(new AttributeReference("__lt__", i), List.of(new CBuilder.list.Length(source))), loopStatements));
+
+            loopStatements.add(new CBuilder.variables.Assignment(value, new ListReference(source, i)));
+            loopStatements.add(new CBuilder.list.Append(target, node.getExpression().accept(this)));
+            loopStatements.add(new CBuilder.variables.Assignment(i,
+                    new CBuilder.objects.Call(new AttributeReference("__add__", i), List.of(new CBuilder.literals.IntLiteral(1)))));
+
+            statements.add(new CBuilder.objects.functions.ReturnStatement(target));
+
+            CBuilder.objects.functions.Function function = new CBuilder.objects.functions.Function(
+                    uniqueNameGenerator.get(),
+                    statements,
+                    List.of(new Argument(source.getName(), 0)),
+                    List.of(
+                            new CBuilder.variables.VariableDeclaration(target.getName()),
+                            new CBuilder.variables.VariableDeclaration(i.getName()),
+                            new CBuilder.variables.VariableDeclaration(value.getName())));
+            functions.add(function);
+
+            //scope = prevScope;
+
+            return new CBuilder.objects.Call(function, List.of(node.getList().accept(this)));
+        }
+
+        @Override
         public CBuilder.Expression visit(Identifier node) {
             Symbol symbol = scope.resolve(node.getIdentifier());
             String name = buildSymbol(symbol, node, node.getIdentifier());
@@ -68,6 +138,11 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
             }
 
             return reference;
+        }
+
+        @Override
+        public CBuilder.Expression visit(Element node) {
+            return new CBuilder.list.ListReference(node.getIdentifier().accept(this), new CBuilder.literals.IntLiteral(node.getIndex()));
         }
 
         @Override
@@ -241,7 +316,7 @@ public class BuilderVisitor extends AstVisitorBase<Object> {
     };
 
     private final Path output;
-    private List<CBuilder.variables.VariableDeclaration> variables = new ArrayList<>();
+    private List<VariableDeclaration> variables = new ArrayList<>();
     private List<CBuilder.objects.functions.Function> functions = new ArrayList<>();
     private List<CBuilder.objects.MPyClass> classes = new ArrayList<>();
 
