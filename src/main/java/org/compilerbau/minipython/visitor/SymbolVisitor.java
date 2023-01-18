@@ -47,13 +47,14 @@ public class SymbolVisitor extends AstVisitorBase<Object> {
     @Override
     public Object visit(Assignment node) {
         Identifier identifier = node.getIdentifier();
+        Symbol var = scope.resolve(identifier);
 
-        if (scope.resolve(identifier) == null) {
-            Variable var = new Variable();
-            var.setValue(node.getExpression().accept(this));
-            scope.bind(identifier, var);
-        } else {
-            node.getExpression().accept(this);
+        if (var == null) {
+            Variable newVar = new Variable();
+            newVar.setValue(node.getExpression().accept(this));
+            scope.bind(identifier, newVar);
+        } else if (var instanceof Variable) {
+            ((Variable) var).setValue(node.getExpression().accept(this));
         }
 
         return null;
